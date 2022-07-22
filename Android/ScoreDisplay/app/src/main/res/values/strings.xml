@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Score Display</string>
-    <string name="title_activity_team_settings">team_settings</string>
+    <string name="title_activity_team_settings">Team Settings</string>
 
     <!-- Preference Titles -->
     <string name="team1_preferences_header">Setup Team 1</string>
@@ -13,5 +13,6 @@
     <string name="team1">Team 1</string>
     <string name="TEAM_1">TEAM 1</string>
     <string name="TEAM_2">TEAM 2</string>
+    <string name="reset">Reset</string>
 
 </resources>

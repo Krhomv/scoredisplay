@@ -13,22 +13,21 @@
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:orientation="horizontal"
         android:gravity="center"
-        android:orientation="vertical"
         tools:layout_editor_absoluteX="1dp"
         tools:layout_editor_absoluteY="1dp">
 
         <Space
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            />
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"/>
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
             android:layout_gravity="bottom"
-            android:layout_weight="0"
+            android:orientation="vertical"
             >
 
             <Button
@@ -38,41 +37,40 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:fontFamily="@font/led_dot_matrix"
-                android:shadowColor="#CF0000"
+                android:shadowColor="@color/team1Color"
                 android:shadowDx="0.0"
                 android:shadowDy="0.0"
                 android:shadowRadius="12"
                 android:text="TEAM 1"
                 android:textAlignment="center"
-                android:textColor="#CF0000"
+                android:textColor="@color/team1Color"
                 android:textSize="38sp" />
+
 
             <Button
                 style="@style/Widget.AppCompat.Button.Borderless"
-                android:id="@+id/team2Name"
+                android:id="@+id/team1ScoreReset"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:fontFamily="@font/led_dot_matrix"
-                android:shadowColor="#CF0000"
+                android:shadowColor="@color/team1Color"
                 android:shadowDx="0.0"
                 android:shadowDy="0.0"
                 android:shadowRadius="12"
-                android:text="TEAM 2"
-                android:textAlignment="center"
-                android:textColor="#CF0000"
+                android:text="@string/reset"
+                android:textColor="@color/team1Color"
                 android:textSize="38sp" />
         </LinearLayout>
 
         <Space
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
-            />
+            android:layout_width="0dp"/>
 
         <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="fill_parent"
             android:gravity="center"
             android:orientation="horizontal">
 
@@ -88,12 +86,12 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:fontFamily="sans-serif"
-                    android:shadowColor="#CF0000"
+                    android:shadowColor="@color/team1Color"
                     android:shadowDx="0.0"
                     android:shadowDy="0.0"
                     android:shadowRadius="12"
                     android:text="▲"
-                    android:textColor="#CF0000"
+                    android:textColor="@color/team1Color"
                     android:textSize="48sp"
 
                     />
@@ -112,7 +110,7 @@
                         android:fontFamily="@font/dseg_regular"
                         android:inputType="number"
                         android:imeOptions="actionDone"
-                        android:shadowColor="#CF0000"
+                        android:shadowColor="@color/team1Color"
                         android:shadowDx="0.0"
                         android:shadowDy="0.0"
                         android:shadowRadius="12"
@@ -121,7 +119,7 @@
                         android:maxLength="2"
                         android:paddingRight="10dp"
                         android:textAlignment="textEnd"
-                        android:textColor="#CF0000"
+                        android:textColor="@color/team1Color"
                         android:textSize="96sp" />
 
                     <TextView
@@ -135,9 +133,10 @@
                         android:singleLine="true"
                         android:text="88"
                         android:textAlignment="textEnd"
-                        android:textColor="#19CF0000"
+                        android:textColor="@color/team1Color"
                         android:textSize="96sp"
-                        android:translationZ="-10dp" />
+                        android:translationZ="-10dp"
+                        android:alpha="0.1"/>
                 </FrameLayout>
 
                 <Button
@@ -147,14 +146,18 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:fontFamily="sans-serif"
-                    android:shadowColor="#CF0000"
+                    android:shadowColor="@color/team1Color"
                     android:shadowDx="0.0"
                     android:shadowDy="0.0"
                     android:shadowRadius="12"
                     android:text="▼"
-                    android:textColor="#CF0000"
+                    android:textColor="@color/team1Color"
                     android:textSize="48sp" />
 
+                <Space
+                    android:layout_height="0dp"
+                    android:layout_width="match_parent"
+                    android:layout_weight="1"/>
 
             </LinearLayout>
 
@@ -175,12 +178,12 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:fontFamily="sans-serif"
-                    android:shadowColor="#CF0000"
+                    android:shadowColor="@color/team2Color"
                     android:shadowDx="0.0"
                     android:shadowDy="0.0"
                     android:shadowRadius="12"
                     android:text="▲"
-                    android:textColor="#CF0000"
+                    android:textColor="@color/team2Color"
                     android:textSize="48sp" />
 
                 <FrameLayout
@@ -196,7 +199,7 @@
                         android:fontFamily="@font/dseg_regular"
                         android:inputType="number"
                         android:imeOptions="actionDone"
-                        android:shadowColor="#CF0000"
+                        android:shadowColor="@color/team2Color"
                         android:shadowDx="0.0"
                         android:shadowDy="0.0"
                         android:shadowRadius="12"
@@ -204,7 +207,7 @@
                         android:text="00"
                         android:textAlignment="textEnd"
                         android:paddingRight="10dp"
-                        android:textColor="#CF0000"
+                        android:textColor="@color/team2Color"
                         android:maxLength="2"
                         android:textSize="96sp" />
 
@@ -219,9 +222,10 @@
                         android:text="88"
                         android:textAlignment="textEnd"
                         android:paddingRight="10dp"
-                        android:textColor="#251111"
+                        android:textColor="@color/team2Color"
                         android:textSize="96sp"
-                        android:translationZ="-10dp" />
+                        android:translationZ="-10dp"
+                        android:alpha="0.1"/>
                 </FrameLayout>
 
                 <Button
@@ -231,63 +235,66 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:fontFamily="sans-serif"
-                    android:shadowColor="#CF0000"
+                    android:shadowColor="@color/team2Color"
                     android:shadowDx="0.0"
                     android:shadowDy="0.0"
                     android:shadowRadius="12"
                     android:text="▼"
-                    android:textColor="#CF0000"
+                    android:textColor="@color/team2Color"
                     android:textSize="48sp" />
             </LinearLayout>
         </LinearLayout>
 
         <Space
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            />
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:layout_width="0dp"/>
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
             android:layout_gravity="bottom"
-            android:layout_weight="0"
+            android:orientation="vertical"
             >
 
             <Button
-                android:id="@+id/team1ScoreReset"
                 style="@style/Widget.AppCompat.Button.Borderless"
+                android:id="@+id/team2Name"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:fontFamily="@font/led_dot_matrix"
-                android:paddingBottom="20dp"
-                android:paddingTop="20dp"
-                android:shadowColor="#CF0000"
+                android:shadowColor="@color/team2Color"
                 android:shadowDx="0.0"
                 android:shadowDy="0.0"
                 android:shadowRadius="12"
-                android:text="reset"
-                android:textColor="#CF0000"
+                android:text="TEAM 1"
+                android:textAlignment="center"
+                android:textColor="@color/team2Color"
                 android:textSize="38sp" />
 
+
             <Button
-                android:id="@+id/team2ScoreReset"
                 style="@style/Widget.AppCompat.Button.Borderless"
+                android:id="@+id/team2ScoreReset"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:fontFamily="@font/led_dot_matrix"
-                android:paddingBottom="20dp"
-                android:paddingTop="20dp"
-                android:shadowColor="#CF0000"
+                android:shadowColor="@color/team2Color"
                 android:shadowDx="0.0"
                 android:shadowDy="0.0"
                 android:shadowRadius="12"
-                android:text="reset"
-                android:textColor="#CF0000"
+                android:text="@string/reset"
+                android:textColor="@color/team2Color"
                 android:textSize="38sp" />
+            
         </LinearLayout>
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"/>
     </LinearLayout>
 
 

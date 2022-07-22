@@ -3,6 +3,10 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Dev/git/scoredisplay/Android/ScoreDisplay/app/src/main/res/layout-land/activity_main.xml" value="0.5754716981132075" />
+        <entry key="..\:/Dev/git/scoredisplay/Android/ScoreDisplay/app/src/main/res/layout/activity_main.xml" value="0.7669944420692604" />
+        <entry key="..\:/Dev/git/scoredisplay/Android/ScoreDisplay/app/src/main/res/xml/team1_preferences.xml" value="0.7914735866543096" />
+        <entry key="..\:/Dev/git/scoredisplay/Android/ScoreDisplay/app/src/main/res/xml/team2_preferences.xml" value="0.7914735866543096" />
         <entry key="..\:/Users/krhom/AndroidStudioProjects/ScoreDisplay/app/src/main/res/drawable/ic_launcher_background.xml" value="0.5615" />
         <entry key="..\:/Users/krhom/AndroidStudioProjects/ScoreDisplay/app/src/main/res/font/dseg.xml" value="0.9635416666666666" />
         <entry key="..\:/Users/krhom/AndroidStudioProjects/ScoreDisplay/app/src/main/res/font/sixteen_segments.xml" value="0.8447916666666667" />

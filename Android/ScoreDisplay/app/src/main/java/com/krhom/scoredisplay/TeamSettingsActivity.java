@@ -25,57 +25,6 @@ import com.skydoves.colorpickerview.listeners.ColorPickerViewListener;
 
 public class TeamSettingsActivity extends AppCompatActivity
 {
-    private static final String TEAM_PREFERENCE_TEAM = "com.krhom.scoredisplay.TEAM_PREFERENCE_TEAM";
-    private static final String TEAM_PREFERENCE_NAME = "com.krhom.scoredisplay.TEAM_PREFERENCE_NAME";
-    private static final String TEAM_PREFERENCE_COLOR = "com.krhom.scoredisplay.TEAM_PREFERENCE_COLOR";
-    private static final String TEAM_PREFERENCE_BRIGHTNESS = "com.krhom.scoredisplay.TEAM_PREFERENCE_BRIGHTNESS";
-
-    public static class TeamSettingsIO
-    {
-        public Team team;
-        public String teamName;
-        public int teamColor;
-        public int teamBrightness;
-    }
-
-    public static class TeamSettingsContract extends ActivityResultContract<TeamSettingsIO, TeamSettingsIO>
-    {
-        @NonNull
-        @Override
-        public Intent createIntent(@NonNull Context context, @NonNull TeamSettingsIO input) {
-            Intent intent = new Intent(context, TeamSettingsActivity.class);
-            setIOOnIntent(intent, input);
-            return intent;
-        }
-
-        @Override
-        public TeamSettingsIO parseResult(int resultCode, @Nullable Intent result) {
-            if (resultCode != Activity.RESULT_OK || result == null) {
-                return null;
-            }
-
-            return getIOFromIntent(result);
-        }
-    }
-
-    private static TeamSettingsIO getIOFromIntent(@NonNull Intent intent)
-    {
-        TeamSettingsIO output = new TeamSettingsIO();
-        output.team = (Team) intent.getSerializableExtra(TEAM_PREFERENCE_TEAM);
-        output.teamName = intent.getStringExtra(TEAM_PREFERENCE_NAME);
-        output.teamColor = intent.getIntExtra(TEAM_PREFERENCE_COLOR, Color.parseColor("#FF0000"));
-        output.teamBrightness = intent.getIntExtra(TEAM_PREFERENCE_BRIGHTNESS, 255);
-        return output;
-    }
-
-    private static void setIOOnIntent(@NonNull Intent intent, @NonNull TeamSettingsIO input)
-    {
-        intent.putExtra(TEAM_PREFERENCE_TEAM, input.team);
-        intent.putExtra(TEAM_PREFERENCE_NAME, input.teamName);
-        intent.putExtra(TEAM_PREFERENCE_COLOR, input.teamColor);
-        intent.putExtra(TEAM_PREFERENCE_BRIGHTNESS, input.teamBrightness);
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -83,9 +32,9 @@ public class TeamSettingsActivity extends AppCompatActivity
         setContentView(R.layout.team_settings_activity);
 
         Intent intent = getIntent();
-        TeamSettingsIO input = getIOFromIntent(intent);
+        Team team = (Team) intent.getSerializableExtra("team");
 
-        PreferenceFragmentCompat fragment = input.team == Team.TEAM1 ? new Team1SettingsFragment() : new Team2SettingsFragment();
+        PreferenceFragmentCompat fragment = team == Team.TEAM1 ? new Team1SettingsFragment() : new Team2SettingsFragment();
 
         if (savedInstanceState == null)
         {
@@ -101,7 +50,7 @@ public class TeamSettingsActivity extends AppCompatActivity
         if (actionBar != null)
         {
             actionBar.setDisplayHomeAsUpEnabled(true);
-            switch (input.team)
+            switch (team)
             {
                 case TEAM1:
                     actionBar.setTitle(getResources().getString(R.string.team1_preferences_header));

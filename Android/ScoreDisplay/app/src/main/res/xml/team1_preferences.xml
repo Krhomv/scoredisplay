@@ -4,6 +4,7 @@
     <EditTextPreference
         android:id="@+id/teamPreferenceTeamName"
         android:defaultValue="@string/TEAM_1"
+        app:iconSpaceReserved="false"
         app:key="team1Name"
         app:title="@string/team_name"
         app:useSimpleSummaryProvider="true" />
@@ -12,19 +13,23 @@
         android:id="@+id/teamPreferenceColorPicker"
         android:key="team1Color"
         android:title="@string/team_color"
+        app:default_color="#FF0000"
+        app:iconSpaceReserved="false"
         app:preference_dialog_title="@string/team_color"
         app:preference_dialog_positive="@string/ok"
         app:preference_dialog_negative="@string/cancel"
         app:preference_attachAlphaSlideBar="false"
         app:preference_attachBrightnessSlideBar="false"
+        app:preference_selector="@drawable/wheel"
         />
 
     <SeekBarPreference
         android:id="@+id/teamPreferenceBrightness"
+        android:key="team1Brightness"
         android:title="@string/team_brightness"
         android:defaultValue="32"
-        app:key="team1Brightness"
         android:min="0"
         android:max="32"
+        app:iconSpaceReserved="false"
         />
 </PreferenceScreen>

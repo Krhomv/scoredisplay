@@ -5,6 +5,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.PreferenceManager;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Rect;
@@ -17,6 +18,8 @@ import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import com.skydoves.colorpickerview.preference.ColorPickerPreferenceManager;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -43,12 +46,7 @@ public class MainActivity
     private static final int TEAM2_PREFERENCE_ACTIVITY = 2;
 
     private int m_team1Score = 0;
-    private int m_team1Colour = Color.parseColor("#CF0000");
-    private int m_team1Brightness = 255;
-
     private int m_team2Score = 0;
-    private int m_team2Colour = Color.parseColor("#CF0000");
-    private int m_team2Brightness = 255;
 
     private Button m_team1Name;
     private Button m_team1ScoreUp;
@@ -67,10 +65,6 @@ public class MainActivity
 
     private Timer m_team1Timer;
     private Timer m_team2Timer;
-
-    private ActivityResultLauncher<TeamSettingsActivity.TeamSettingsIO> m_teamSettingsActivityLauncher;
-
-    private SharedPreferences.OnSharedPreferenceChangeListener m_preferenceChangelistener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -109,28 +103,17 @@ public class MainActivity
         PreferenceManager.setDefaultValues(this, R.xml.team1_preferences, false);
         PreferenceManager.setDefaultValues(this, R.xml.team2_preferences, false);
 
-        m_teamSettingsActivityLauncher = registerForActivityResult(new TeamSettingsActivity.TeamSettingsContract(),
-                new ActivityResultCallback<TeamSettingsActivity.TeamSettingsIO>() {
-                    @Override
-                    public void onActivityResult(TeamSettingsActivity.TeamSettingsIO result) {
-
-                    }
-                });
-
         getSupportActionBar().hide();
 
-        //Loads Shared preferences
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        applyStoredPreferences();
+    }
 
-        //Setup a shared preference listener for hpwAddress and restart transport
-        m_preferenceChangelistener = new SharedPreferences.OnSharedPreferenceChangeListener()
-        {
-            public void onSharedPreferenceChanged(SharedPreferences prefs, String key)
-            {
-                // TODO
-            }
-        };
-        prefs.registerOnSharedPreferenceChangeListener(m_preferenceChangelistener);
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+
+        applyStoredPreferences();
     }
 
     @Override
@@ -239,74 +222,56 @@ public class MainActivity
 
     public void showTeamSetupDialog(Team team)
     {
-        TeamSettingsActivity.TeamSettingsIO args = new TeamSettingsActivity.TeamSettingsIO();
-        args.team = team;
-        switch (team)
-        {
-            case TEAM1:
-                args.teamName = m_team1Name.getText().toString();
-                args.teamColor = m_team1Colour;
-                args.teamBrightness = m_team1Brightness;
-                break;
-            case TEAM2:
-                args.teamName = m_team2Name.getText().toString();
-                args.teamColor = m_team2Colour;
-                args.teamBrightness = m_team2Brightness;
-                break;
-        }
+        Intent settingsIntent = new Intent(this, TeamSettingsActivity.class);
+        settingsIntent.putExtra("team", team);
 
-        m_teamSettingsActivityLauncher.launch(args);
-
-//        m_teamSetupDialogFragment.team = team;
-//        switch (team)
-//        {
-//            case TEAM1:
-//                m_teamSetupDialogFragment.title = "Setup Team 1";
-//                m_teamSetupDialogFragment.teamName = m_team1Name.getText().toString();
-//                m_teamSetupDialogFragment.teamColour = m_team1Colour;
-//                break;
-//            case TEAM2:
-//                m_teamSetupDialogFragment.title = "Setup Team 2";
-//                m_teamSetupDialogFragment.teamName = m_team2Name.getText().toString();
-//                m_teamSetupDialogFragment.teamColour = m_team2Colour;
-//                break;
-//        }
-//
-//        m_teamSetupDialogFragment.show(getSupportFragmentManager(), TeamSetupDialogFragment.TAG);
+        startActivity(settingsIntent);
     }
 
-    private void setTeam1Colour(int colour)
+    private void applyStoredPreferences()
     {
-        m_team1Name.setTextColor(colour);
-        m_team1Name.setShadowLayer(12, 0, 0, colour);
-        m_team1ScoreText.setTextColor(colour);
-        m_team1ScoreText.setShadowLayer(12, 0, 0, colour);
-        m_team1ScoreUp.setTextColor(colour);
-        m_team1ScoreUp.setShadowLayer(12, 0, 0, colour);
-        m_team1ScoreDown.setTextColor(colour);
-        m_team1ScoreDown.setShadowLayer(12, 0, 0, colour);
-        m_team1ScoreReset.setTextColor(colour);
-        m_team1ScoreReset.setShadowLayer(12, 0, 0, colour);
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        ColorPickerPreferenceManager colorPreferences = ColorPickerPreferenceManager.getInstance(this);
 
-        int transparent = Color.argb(25, Color.red(colour), Color.green(colour), Color.blue(colour));
-        m_team1ScoreBackground.setTextColor(transparent);
+        String team1Name = preferences.getString("team1Name", getResources().getString(R.string.TEAM_1));
+        m_team1Name.setText(team1Name);
+        int team1Color = colorPreferences.getColor("team1Color", getResources().getColor(R.color.team1Color, null));
+        setTeam1Color(team1Color);
+
+        String team2Name = preferences.getString("team2Name", getResources().getString(R.string.TEAM_2));
+        m_team2Name.setText(team2Name);
+        int team2Color = colorPreferences.getColor("team2Color", getResources().getColor(R.color.team2Color, null));
+        setTeam2Color(team2Color);
     }
 
-    private void setTeam2Colour(int colour)
+    private void setTeam1Color(int color)
     {
-        m_team2Name.setTextColor(colour);
-        m_team2Name.setShadowLayer(12, 0, 0, colour);
-        m_team2ScoreText.setTextColor(colour);
-        m_team2ScoreText.setShadowLayer(12, 0, 0, colour);
-        m_team2ScoreUp.setTextColor(colour);
-        m_team2ScoreUp.setShadowLayer(12, 0, 0, colour);
-        m_team2ScoreDown.setTextColor(colour);
-        m_team2ScoreDown.setShadowLayer(12, 0, 0, colour);
-        m_team2ScoreReset.setTextColor(colour);
-        m_team2ScoreReset.setShadowLayer(12, 0, 0, colour);
+        m_team1Name.setTextColor(color);
+        m_team1Name.setShadowLayer(12, 0, 0, color);
+        m_team1ScoreText.setTextColor(color);
+        m_team1ScoreText.setShadowLayer(12, 0, 0, color);
+        m_team1ScoreUp.setTextColor(color);
+        m_team1ScoreUp.setShadowLayer(12, 0, 0, color);
+        m_team1ScoreDown.setTextColor(color);
+        m_team1ScoreDown.setShadowLayer(12, 0, 0, color);
+        m_team1ScoreReset.setTextColor(color);
+        m_team1ScoreReset.setShadowLayer(12, 0, 0, color);
+        m_team1ScoreBackground.setTextColor(color);
+    }
 
-        int transparent = Color.argb(25, Color.red(colour), Color.green(colour), Color.blue(colour));
-        m_team2ScoreBackground.setTextColor(transparent);
+    private void setTeam2Color(int color)
+    {
+        m_team2Name.setTextColor(color);
+        m_team2Name.setShadowLayer(12, 0, 0, color);
+        m_team2ScoreText.setTextColor(color);
+        m_team2ScoreText.setShadowLayer(12, 0, 0, color);
+        m_team2ScoreUp.setTextColor(color);
+        m_team2ScoreUp.setShadowLayer(12, 0, 0, color);
+        m_team2ScoreDown.setTextColor(color);
+        m_team2ScoreDown.setShadowLayer(12, 0, 0, color);
+        m_team2ScoreReset.setTextColor(color);
+        m_team2ScoreReset.setShadowLayer(12, 0, 0, color);
+        m_team2ScoreBackground.setTextColor(color);
     }
 
     private void refreshTeam1ScoreDisplay()

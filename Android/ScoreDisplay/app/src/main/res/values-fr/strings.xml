@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Afficheur de Score</string>
+    <string name="title_activity_team_settings">Options d\'equipe</string>
+
+    <!-- Preference Titles -->
+    <string name="team1_preferences_header">Configurer l\'équipe 1</string>
+    <string name="team2_preferences_header">Configurer l\'équipe 2</string>
+    <string name="team_name">Nom de l\'equipe</string>
+    <string name="team_color">Couleur de l\'equipe</string>
+    <string name="ok">Ok</string>
+    <string name="cancel">Annuler</string>
+    <string name="team_brightness">Luminosité</string>
+    <string name="team1">Equipe 1</string>
+    <string name="TEAM_1">EQUP 1</string>
+    <string name="TEAM_2">EQUP 2</string>
+    <string name="reset">RESET</string>
+</resources>
