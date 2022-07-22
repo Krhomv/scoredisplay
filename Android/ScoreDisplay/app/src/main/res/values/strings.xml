@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">Score Display</string>
+    <string name="title_activity_team_settings">team_settings</string>
+
+    <!-- Preference Titles -->
+    <string name="team1_preferences_header">Setup Team 1</string>
+    <string name="team2_preferences_header">Setup Team 2</string>
+    <string name="team_name">Team Name</string>
+    <string name="team_color">Team Color</string>
+    <string name="ok">Ok</string>
+    <string name="cancel">Cancel</string>
+    <string name="team_brightness">Brightness</string>
+    <string name="team1">Team 1</string>
+    <string name="TEAM_1">TEAM 1</string>
+    <string name="TEAM_2">TEAM 2</string>
+
+</resources>

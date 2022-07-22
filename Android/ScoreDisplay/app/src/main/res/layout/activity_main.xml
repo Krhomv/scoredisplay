@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/score_display_background"
+    android:focusableInTouchMode="true"
+    tools:context=".MainActivity">
+
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        tools:layout_editor_absoluteX="1dp"
+        tools:layout_editor_absoluteY="1dp">
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_weight="0"
+            >
+
+            <Button
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:id="@+id/team1Name"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="@font/led_dot_matrix"
+                android:shadowColor="#CF0000"
+                android:shadowDx="0.0"
+                android:shadowDy="0.0"
+                android:shadowRadius="12"
+                android:text="TEAM 1"
+                android:textAlignment="center"
+                android:textColor="#CF0000"
+                android:textSize="38sp" />
+
+            <Button
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:id="@+id/team2Name"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="@font/led_dot_matrix"
+                android:shadowColor="#CF0000"
+                android:shadowDx="0.0"
+                android:shadowDy="0.0"
+                android:shadowRadius="12"
+                android:text="TEAM 2"
+                android:textAlignment="center"
+                android:textColor="#CF0000"
+                android:textSize="38sp" />
+        </LinearLayout>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <Button
+                    android:id="@+id/team1ScoreUp"
+                    style="@style/Widget.AppCompat.Button.Borderless"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFamily="sans-serif"
+                    android:shadowColor="#CF0000"
+                    android:shadowDx="0.0"
+                    android:shadowDy="0.0"
+                    android:shadowRadius="12"
+                    android:text="▲"
+                    android:textColor="#CF0000"
+                    android:textSize="48sp" />
+
+                <FrameLayout
+                    android:layout_width="180dp"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="30dp"
+                    android:paddingBottom="26dp">
+
+                    <EditText
+                        android:id="@+id/team1Score"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@null"
+                        android:ems="10"
+                        android:fontFamily="@font/dseg_regular"
+                        android:inputType="number"
+                        android:imeOptions="actionDone"
+                        android:shadowColor="#CF0000"
+                        android:shadowDx="0.0"
+                        android:shadowDy="0.0"
+                        android:shadowRadius="12"
+                        android:singleLine="true"
+                        android:text="00"
+                        android:maxLength="2"
+                        android:paddingRight="10dp"
+                        android:textAlignment="textEnd"
+                        android:textColor="#CF0000"
+                        android:textSize="96sp" />
+
+                    <TextView
+                        android:id="@+id/team1ScoreBackground"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@null"
+                        android:ems="10"
+                        android:fontFamily="@font/dseg_regular"
+                        android:paddingRight="10dp"
+                        android:singleLine="true"
+                        android:text="88"
+                        android:textAlignment="textEnd"
+                        android:textColor="#19CF0000"
+                        android:textSize="96sp"
+                        android:translationZ="-10dp" />
+                </FrameLayout>
+
+                <Button
+                    android:id="@+id/team1ScoreDown"
+                    style="@style/Widget.AppCompat.Button.Borderless"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFamily="sans-serif"
+                    android:shadowColor="#CF0000"
+                    android:shadowDx="0.0"
+                    android:shadowDy="0.0"
+                    android:shadowRadius="12"
+                    android:text="▼"
+                    android:textColor="#CF0000"
+                    android:textSize="48sp" />
+
+
+            </LinearLayout>
+
+            <Space
+                android:layout_width="20dp"
+                android:layout_height="match_parent"
+                />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <Button
+                    android:id="@+id/team2ScoreUp"
+                    style="@style/Widget.AppCompat.Button.Borderless"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFamily="sans-serif"
+                    android:shadowColor="#CF0000"
+                    android:shadowDx="0.0"
+                    android:shadowDy="0.0"
+                    android:shadowRadius="12"
+                    android:text="▲"
+                    android:textColor="#CF0000"
+                    android:textSize="48sp" />
+
+                <FrameLayout
+                    android:layout_width="180dp"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="30dp"
+                    android:paddingBottom="26dp">
+
+                    <EditText
+                        android:id="@+id/team2Score"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@null"
+                        android:ems="10"
+                        android:fontFamily="@font/dseg_regular"
+                        android:inputType="number"
+                        android:imeOptions="actionDone"
+                        android:shadowColor="#CF0000"
+                        android:shadowDx="0.0"
+                        android:shadowDy="0.0"
+                        android:shadowRadius="12"
+                        android:singleLine="true"
+                        android:text="00"
+                        android:textAlignment="textEnd"
+                        android:paddingRight="10dp"
+                        android:textColor="#CF0000"
+                        android:maxLength="2"
+                        android:textSize="96sp" />
+
+                    <TextView
+                        android:id="@+id/team2ScoreBackground"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@null"
+                        android:ems="10"
+                        android:fontFamily="@font/dseg_regular"
+                        android:singleLine="true"
+                        android:text="88"
+                        android:textAlignment="textEnd"
+                        android:paddingRight="10dp"
+                        android:textColor="#251111"
+                        android:textSize="96sp"
+                        android:translationZ="-10dp" />
+                </FrameLayout>
+
+                <Button
+                    android:id="@+id/team2ScoreDown"
+                    style="@style/Widget.AppCompat.Button.Borderless"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFamily="sans-serif"
+                    android:shadowColor="#CF0000"
+                    android:shadowDx="0.0"
+                    android:shadowDy="0.0"
+                    android:shadowRadius="12"
+                    android:text="▼"
+                    android:textColor="#CF0000"
+                    android:textSize="48sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_weight="0"
+            >
+
+            <Button
+                android:id="@+id/team1ScoreReset"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="@font/led_dot_matrix"
+                android:paddingBottom="20dp"
+                android:paddingTop="20dp"
+                android:shadowColor="#CF0000"
+                android:shadowDx="0.0"
+                android:shadowDy="0.0"
+                android:shadowRadius="12"
+                android:text="reset"
+                android:textColor="#CF0000"
+                android:textSize="38sp" />
+
+            <Button
+                android:id="@+id/team2ScoreReset"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="@font/led_dot_matrix"
+                android:paddingBottom="20dp"
+                android:paddingTop="20dp"
+                android:shadowColor="#CF0000"
+                android:shadowDx="0.0"
+                android:shadowDy="0.0"
+                android:shadowRadius="12"
+                android:text="reset"
+                android:textColor="#CF0000"
+                android:textSize="38sp" />
+        </LinearLayout>
+    </LinearLayout>
+
+
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

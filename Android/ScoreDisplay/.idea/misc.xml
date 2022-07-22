@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/Users/krhom/AndroidStudioProjects/ScoreDisplay/app/src/main/res/drawable/ic_launcher_background.xml" value="0.5615" />
+        <entry key="..\:/Users/krhom/AndroidStudioProjects/ScoreDisplay/app/src/main/res/font/dseg.xml" value="0.9635416666666666" />
+        <entry key="..\:/Users/krhom/AndroidStudioProjects/ScoreDisplay/app/src/main/res/font/sixteen_segments.xml" value="0.8447916666666667" />
+        <entry key="..\:/Users/krhom/AndroidStudioProjects/ScoreDisplay/app/src/main/res/layout-land/activity_main.xml" value="0.4665263157894737" />
+        <entry key="..\:/Users/krhom/AndroidStudioProjects/ScoreDisplay/app/src/main/res/layout-land/team_setup_dialog.xml" value="0.6340388007054674" />
+        <entry key="..\:/Users/krhom/AndroidStudioProjects/ScoreDisplay/app/src/main/res/layout/activity_main.xml" value="0.6494169096209913" />
+        <entry key="..\:/Users/krhom/AndroidStudioProjects/ScoreDisplay/app/src/main/res/layout/activity_team_settings.xml" value="0.934375" />
+        <entry key="..\:/Users/krhom/AndroidStudioProjects/ScoreDisplay/app/src/main/res/layout/settings_activity.xml" value="0.7669944420692604" />
+        <entry key="..\:/Users/krhom/AndroidStudioProjects/ScoreDisplay/app/src/main/res/layout/team_settings_activity.xml" value="0.6147926464300983" />
+        <entry key="..\:/Users/krhom/AndroidStudioProjects/ScoreDisplay/app/src/main/res/layout/team_setup_dialog.xml" value="0.8273809523809523" />
+        <entry key="..\:/Users/krhom/AndroidStudioProjects/ScoreDisplay/app/src/main/res/xml/root_preferences.xml" value="0.7669944420692604" />
+        <entry key="..\:/Users/krhom/AndroidStudioProjects/ScoreDisplay/app/src/main/res/xml/team1_preferences.xml" value="0.6147926464300983" />
+        <entry key="..\:/Users/krhom/AndroidStudioProjects/ScoreDisplay/app/src/main/res/xml/team2_preferences.xml" value="0.7669944420692604" />
+        <entry key="..\:/Users/krhom/AndroidStudioProjects/ScoreDisplay/app/src/main/res/xml/team_settings.xml" value="0.934375" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/build/classes" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="Android" />
+  </component>
+</project>

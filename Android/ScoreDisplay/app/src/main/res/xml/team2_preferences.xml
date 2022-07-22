@@ -1,0 +1,30 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <EditTextPreference
+        android:id="@+id/teamPreferenceTeamName"
+        android:defaultValue="@string/TEAM_2"
+        app:key="team2Name"
+        app:title="@string/team_name"
+        app:useSimpleSummaryProvider="true" />
+
+    <com.skydoves.colorpickerpreference.ColorPickerPreference
+        android:id="@+id/teamPreferenceColorPicker"
+        android:key="team2Color"
+        android:title="@string/team_color"
+        app:preference_dialog_title="@string/team_color"
+        app:preference_dialog_positive="@string/ok"
+        app:preference_dialog_negative="@string/cancel"
+        app:preference_attachAlphaSlideBar="false"
+        app:preference_attachBrightnessSlideBar="false"
+        />
+
+    <SeekBarPreference
+        android:id="@+id/teamPreferenceBrightness"
+        android:title="@string/team_brightness"
+        android:defaultValue="32"
+        app:key="team2Brightness"
+        android:min="0"
+        android:max="32"
+        />
+</PreferenceScreen>
