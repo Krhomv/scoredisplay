@@ -15,4 +15,5 @@
     <string name="TEAM_1">EQUP 1</string>
     <string name="TEAM_2">EQUP 2</string>
     <string name="reset">RESET</string>
+    <string name="connect_bluetooth">Connecter Afficheur Bluetooth</string>
 </resources>

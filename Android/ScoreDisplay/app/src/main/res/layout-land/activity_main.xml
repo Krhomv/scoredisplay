@@ -8,6 +8,17 @@
     android:focusableInTouchMode="true"
     tools:context=".MainActivity">
 
+    <ImageButton
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:elevation="10dp"
+        android:id="@+id/bluetooth"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        android:alpha="0.4"
+        app:tint="@color/bluetoothOff"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_baseline_bluetooth_disabled_24" />
 
     <LinearLayout
         android:id="@+id/linearLayout"

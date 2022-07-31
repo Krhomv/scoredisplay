@@ -14,5 +14,6 @@
     <string name="TEAM_1">TEAM 1</string>
     <string name="TEAM_2">TEAM 2</string>
     <string name="reset">Reset</string>
+    <string name="connect_bluetooth">Connect Bluetooth Display</string>
 
 </resources>

@@ -1,13 +1,11 @@
 package com.krhom.scoredisplay;
 
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.preference.PreferenceManager;
-
+import android.Manifest;
+import android.annotation.SuppressLint;
+import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
+import android.content.pm.PackageManager;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -17,12 +15,21 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.preference.PreferenceManager;
 
 import com.skydoves.colorpickerview.preference.ColorPickerPreferenceManager;
 
 import java.util.Timer;
 import java.util.TimerTask;
+
+
 
 enum Team
 {
@@ -38,15 +45,25 @@ public class MainActivity
                    View.OnTouchListener
 
 {
-
+    static {
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+    }
 
     private static final int MAX_SCORE = 99;
     private static final int RESET_TIME_REQUIRED_MS = 1575;
     private static final int TEAM1_PREFERENCE_ACTIVITY = 1;
     private static final int TEAM2_PREFERENCE_ACTIVITY = 2;
+    private static final int BT_PERMISSION_REQUEST = 14;
+    private static final String[] BT_PERMISSIONS = new String[]{
+            Manifest.permission.BLUETOOTH,
+            Manifest.permission.BLUETOOTH_ADMIN,
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.ACCESS_FINE_LOCATION};
 
     private int m_team1Score = 0;
     private int m_team2Score = 0;
+
+    private ImageButton m_bluetoothButton;
 
     private Button m_team1Name;
     private Button m_team1ScoreUp;
@@ -72,6 +89,8 @@ public class MainActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        m_bluetoothButton = (ImageButton) findViewById(R.id.bluetooth);
+
         m_team1Name = (Button) findViewById(R.id.team1Name);
         m_team1ScoreUp = (Button) findViewById(R.id.team1ScoreUp);
         m_team1ScoreDown = (Button) findViewById(R.id.team1ScoreDown);
@@ -85,6 +104,8 @@ public class MainActivity
         m_team2ScoreReset = (Button) findViewById(R.id.team2ScoreReset);
         m_team2ScoreText = (EditText) findViewById(R.id.team2Score);
         m_team2ScoreBackground = (TextView) findViewById(R.id.team2ScoreBackground);
+
+        m_bluetoothButton.setOnClickListener(this);
 
         m_team1Name.setOnClickListener(this);
         m_team1ScoreUp.setOnClickListener(this);
@@ -106,6 +127,7 @@ public class MainActivity
         getSupportActionBar().hide();
 
         applyStoredPreferences();
+
     }
 
     @Override
@@ -124,6 +146,9 @@ public class MainActivity
         
         switch (v.getId())
         {
+            case R.id.bluetooth:
+                handleBluetoothButtonClicked();
+                break;
             case R.id.team1Name:
                 showTeamSetupDialog(Team.TEAM1);
                 break;
@@ -220,7 +245,56 @@ public class MainActivity
         return false;
     }
 
-    public void showTeamSetupDialog(Team team)
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case BT_PERMISSION_REQUEST:
+                if (areAllBTPermissionsGranted())
+                {
+                    handleBluetoothButtonClicked();
+                }
+                break;
+        }
+    }
+
+    private boolean areAllBTPermissionsGranted()
+    {
+        for (String permission : BT_PERMISSIONS)
+        {
+            if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    @SuppressLint("MissingPermission")
+    private void handleBluetoothButtonClicked()
+    {
+        if (areAllBTPermissionsGranted())
+        {
+            BluetoothAdapter bluetoothAdapter = BluetoothManager.getInstance().getBluetoothAdapter();
+            if (bluetoothAdapter.isEnabled())
+            {
+                Intent bluetoothIntent = new Intent(this, BluetoothScanActivity.class);
+                startActivity(bluetoothIntent);
+            }
+            else
+            {
+                Intent turnOn = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                startActivity(turnOn);
+            }
+        }
+        else
+        {
+            ActivityCompat.requestPermissions(this, BT_PERMISSIONS, BT_PERMISSION_REQUEST);
+        }
+    }
+
+    private void showTeamSetupDialog(Team team)
     {
         Intent settingsIntent = new Intent(this, TeamSettingsActivity.class);
         settingsIntent.putExtra("team", team);

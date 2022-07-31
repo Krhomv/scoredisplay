@@ -3,8 +3,12 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Dev/git/scoredisplay/Android/ScoreDisplay/app/src/main/res/drawable/ic_baseline_bluetooth_24.xml" value="0.719" />
         <entry key="..\:/Dev/git/scoredisplay/Android/ScoreDisplay/app/src/main/res/layout-land/activity_main.xml" value="0.5754716981132075" />
+        <entry key="..\:/Dev/git/scoredisplay/Android/ScoreDisplay/app/src/main/res/layout/activity_bluetooth_scan.xml" value="0.579307396323215" />
         <entry key="..\:/Dev/git/scoredisplay/Android/ScoreDisplay/app/src/main/res/layout/activity_main.xml" value="0.7669944420692604" />
+        <entry key="..\:/Dev/git/scoredisplay/Android/ScoreDisplay/app/src/main/res/layout/bluetooth_device_view.xml" value="0.7669944420692604" />
+        <entry key="..\:/Dev/git/scoredisplay/Android/ScoreDisplay/app/src/main/res/layout/sample_bluetooth_device.xml" value="0.5677640017101325" />
         <entry key="..\:/Dev/git/scoredisplay/Android/ScoreDisplay/app/src/main/res/xml/team1_preferences.xml" value="0.7914735866543096" />
         <entry key="..\:/Dev/git/scoredisplay/Android/ScoreDisplay/app/src/main/res/xml/team2_preferences.xml" value="0.7914735866543096" />
         <entry key="..\:/Users/krhom/AndroidStudioProjects/ScoreDisplay/app/src/main/res/drawable/ic_launcher_background.xml" value="0.5615" />
