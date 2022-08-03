@@ -20,5 +20,4 @@
     <string name="bluetooth_device_connecting">CONNECTING...</string>
     <string name="bluetooth_device_connected">CONNECTED</string>
     <string name="bluetooth_device_connection_failed">CONNECTION FAILED</string>
-
 </resources>

@@ -24,6 +24,8 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
 
+import com.krhom.scoredisplay.bluetooth.BluetoothManager;
+import com.krhom.scoredisplay.bluetooth.BluetoothScanActivity;
 import com.skydoves.colorpickerview.preference.ColorPickerPreferenceManager;
 
 import java.util.Timer;
@@ -88,6 +90,8 @@ public class MainActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        BluetoothManager.initialise(this);
 
         m_bluetoothButton = (ImageButton) findViewById(R.id.bluetooth);
 

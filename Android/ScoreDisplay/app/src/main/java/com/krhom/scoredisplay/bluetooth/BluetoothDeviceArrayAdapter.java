@@ -1,7 +1,5 @@
-package com.krhom.scoredisplay;
+package com.krhom.scoredisplay.bluetooth;
 
-import android.annotation.SuppressLint;
-import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,26 +7,36 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import com.krhom.scoredisplay.R;
+import com.polidea.rxandroidble2.RxBleConnection;
+import com.polidea.rxandroidble2.RxBleDevice;
+import com.polidea.rxandroidble2.scan.ScanResult;
+
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
-public class BluetoothDeviceArrayAdapter extends ArrayAdapter<BluetoothDevice>
+public class BluetoothDeviceArrayAdapter extends ArrayAdapter<RxBleDevice>
 {
 
     private int m_resourceLayout;
     private Context m_context;
+    List<RxBleDevice> m_items;
+    private static final Comparator<RxBleDevice> SORTING_COMPARATOR = (lhs, rhs) ->
+            lhs.getMacAddress().compareTo(rhs.getMacAddress());
 
-    public BluetoothDeviceArrayAdapter(Context context, int resource, List<BluetoothDevice> items)
+    public BluetoothDeviceArrayAdapter(Context context, int resource, List<RxBleDevice> items)
     {
         super(context, resource, items);
         this.m_resourceLayout = resource;
         this.m_context = context;
+        this.m_items = items;
+        Collections.sort(m_items, SORTING_COMPARATOR);
     }
 
-    @SuppressLint("MissingPermission")
     @Override
     public View getView(int position, View convertView, ViewGroup parent)
     {
-
         View v = convertView;
 
         if (v == null)
@@ -38,9 +46,9 @@ public class BluetoothDeviceArrayAdapter extends ArrayAdapter<BluetoothDevice>
             v = vi.inflate(m_resourceLayout, null);
         }
 
-        BluetoothDevice bluetoothDevice = getItem(position);
+        RxBleDevice bleDevice = getItem(position);
 
-        if (bluetoothDevice != null)
+        if (bleDevice != null)
         {
             TextView btDeviceName = (TextView) v.findViewById(R.id.btDeviceName);
             TextView btDeviceConnected = (TextView) v.findViewById(R.id.btDeviceConnected);
@@ -48,13 +56,14 @@ public class BluetoothDeviceArrayAdapter extends ArrayAdapter<BluetoothDevice>
 
             if (btDeviceName != null)
             {
-                btDeviceName.setText(bluetoothDevice.getName());
+                btDeviceName.setText(bleDevice.getName());
             }
 
             if (btDeviceConnected != null)
             {
                 BluetoothManager bluetoothManager = BluetoothManager.getInstance();
-                switch (bluetoothManager.getBluetootDeviceStatus(bluetoothDevice))
+                RxBleConnection.RxBleConnectionState connectionState = bluetoothManager.getBluetoothDeviceConnectionState(bleDevice.getMacAddress());
+                switch (connectionState)
                 {
                     case CONNECTED:
                         btDeviceConnected.setText(m_context.getString(R.string.bluetooth_device_connected));
@@ -68,7 +77,7 @@ public class BluetoothDeviceArrayAdapter extends ArrayAdapter<BluetoothDevice>
                         btDeviceConnected.setText(m_context.getString(R.string.bluetooth_device_disconnected));
                         btDeviceConnected.setTextColor(m_context.getColor(R.color.bluetoothDeviceDisconnected));
                         break;
-                    case FAILED:
+                    case DISCONNECTING:
                         btDeviceConnected.setText(m_context.getString(R.string.bluetooth_device_connection_failed));
                         btDeviceConnected.setTextColor(m_context.getColor(R.color.bluetoothDeviceConnectionFailed));
                         break;
@@ -77,11 +86,32 @@ public class BluetoothDeviceArrayAdapter extends ArrayAdapter<BluetoothDevice>
 
             if (btDeviceAddress != null)
             {
-                btDeviceAddress.setText(bluetoothDevice.getAddress());
+                btDeviceAddress.setText(bleDevice.getMacAddress());
             }
         }
 
         return v;
+    }
+
+    void addScanResult(ScanResult bleScanResult)
+    {
+        String name = bleScanResult.getScanRecord().getDeviceName();
+        if (name != null && !name.isEmpty())
+        {
+            RxBleDevice bleDevice = bleScanResult.getBleDevice();
+            String macAddress = bleDevice.getMacAddress();
+            if (!m_items.stream().filter(x -> x.getMacAddress().equals(macAddress)).findFirst().isPresent())
+            {
+                m_items.add(bleScanResult.getBleDevice());
+                Collections.sort(m_items, SORTING_COMPARATOR);
+                notifyDataSetChanged();
+            }
+        }
+    }
+
+    void clearScanResults() {
+        m_items.clear();
+        notifyDataSetChanged();
     }
 
 }
