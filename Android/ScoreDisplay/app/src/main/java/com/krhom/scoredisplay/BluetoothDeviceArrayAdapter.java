@@ -14,14 +14,14 @@ import java.util.List;
 public class BluetoothDeviceArrayAdapter extends ArrayAdapter<BluetoothDevice>
 {
 
-    private int resourceLayout;
-    private Context mContext;
+    private int m_resourceLayout;
+    private Context m_context;
 
     public BluetoothDeviceArrayAdapter(Context context, int resource, List<BluetoothDevice> items)
     {
         super(context, resource, items);
-        this.resourceLayout = resource;
-        this.mContext = context;
+        this.m_resourceLayout = resource;
+        this.m_context = context;
     }
 
     @SuppressLint("MissingPermission")
@@ -34,13 +34,13 @@ public class BluetoothDeviceArrayAdapter extends ArrayAdapter<BluetoothDevice>
         if (v == null)
         {
             LayoutInflater vi;
-            vi = LayoutInflater.from(mContext);
-            v = vi.inflate(resourceLayout, null);
+            vi = LayoutInflater.from(m_context);
+            v = vi.inflate(m_resourceLayout, null);
         }
 
-        BluetoothDevice p = getItem(position);
+        BluetoothDevice bluetoothDevice = getItem(position);
 
-        if (p != null)
+        if (bluetoothDevice != null)
         {
             TextView btDeviceName = (TextView) v.findViewById(R.id.btDeviceName);
             TextView btDeviceConnected = (TextView) v.findViewById(R.id.btDeviceConnected);
@@ -48,17 +48,36 @@ public class BluetoothDeviceArrayAdapter extends ArrayAdapter<BluetoothDevice>
 
             if (btDeviceName != null)
             {
-                btDeviceName.setText(p.getName());
+                btDeviceName.setText(bluetoothDevice.getName());
             }
 
             if (btDeviceConnected != null)
             {
-                btDeviceConnected.setText("CONNECTED?");
+                BluetoothManager bluetoothManager = BluetoothManager.getInstance();
+                switch (bluetoothManager.getBluetootDeviceStatus(bluetoothDevice))
+                {
+                    case CONNECTED:
+                        btDeviceConnected.setText(m_context.getString(R.string.bluetooth_device_connected));
+                        btDeviceConnected.setTextColor(m_context.getColor(R.color.bluetoothDeviceConnected));
+                        break;
+                    case CONNECTING:
+                        btDeviceConnected.setText(m_context.getString(R.string.bluetooth_device_connecting));
+                        btDeviceConnected.setTextColor(m_context.getColor(R.color.bluetoothDeviceConnecting));
+                        break;
+                    case DISCONNECTED:
+                        btDeviceConnected.setText(m_context.getString(R.string.bluetooth_device_disconnected));
+                        btDeviceConnected.setTextColor(m_context.getColor(R.color.bluetoothDeviceDisconnected));
+                        break;
+                    case FAILED:
+                        btDeviceConnected.setText(m_context.getString(R.string.bluetooth_device_connection_failed));
+                        btDeviceConnected.setTextColor(m_context.getColor(R.color.bluetoothDeviceConnectionFailed));
+                        break;
+                }
             }
 
             if (btDeviceAddress != null)
             {
-                btDeviceAddress.setText(p.getAddress());
+                btDeviceAddress.setText(bluetoothDevice.getAddress());
             }
         }
 

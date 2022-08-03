@@ -9,6 +9,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -20,11 +22,9 @@ import java.util.List;
 import java.util.Set;
 
 @SuppressLint("MissingPermission")
-public class BluetoothScanActivity extends AppCompatActivity
+public class BluetoothScanActivity extends AppCompatActivity implements AdapterView.OnItemClickListener, BluetoothDeviceStatusChangedListener
 {
-
     private ListView m_bluetoothDeviceListView;
-    private ArrayList<String> m_bluetoothDeviceNames = new ArrayList<>();
     private BluetoothManager m_bluetoothManager;
     private BluetoothDeviceArrayAdapter m_bluetoothDeviceArrayAdapter;
     private List<BluetoothDevice> m_bluetoothDeviceList = new ArrayList<>();
@@ -44,6 +44,8 @@ public class BluetoothScanActivity extends AppCompatActivity
 
         m_bluetoothDeviceListView = (ListView) findViewById(R.id.bluetoothDeviceList);
         m_bluetoothManager = BluetoothManager.getInstance();
+        m_bluetoothManager.addBluetoothDeviceStatusChangedListener(this);
+
         BluetoothAdapter bluetoothAdapter = m_bluetoothManager.getBluetoothAdapter();
 
         IntentFilter filter = new IntentFilter();
@@ -61,15 +63,14 @@ public class BluetoothScanActivity extends AppCompatActivity
             m_bluetoothDeviceListView.setAdapter(m_bluetoothDeviceArrayAdapter);
 
             boolean started = bluetoothAdapter.startDiscovery();
-            if (started)
+            if (!started)
             {
-                Toast.makeText(this, "Scan Discovery Started", Toast.LENGTH_SHORT).show();
-            }
-            else
-            {
-                Toast.makeText(this, "Scan Discovery Didn't Start", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getResources().getString(R.string.bluetooth_scan_start_failed), Toast.LENGTH_SHORT).show();
             }
         }
+
+        m_bluetoothDeviceListView.setClickable(true);
+        m_bluetoothDeviceListView.setOnItemClickListener(this);
     }
 
     // Create a BroadcastReceiver for ACTION_FOUND.
@@ -83,20 +84,14 @@ public class BluetoothScanActivity extends AppCompatActivity
                 m_bluetoothDeviceList.add(device);
                 m_bluetoothDeviceArrayAdapter.notifyDataSetChanged();
             }
-            else if (BluetoothAdapter.ACTION_DISCOVERY_STARTED.equals(action))
-            {
-                Toast.makeText(getApplicationContext(), "Scan Started", Toast.LENGTH_SHORT).show();
-            }
-            else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action))
-            {
-                Toast.makeText(getApplicationContext(), "Scan Stopped", Toast.LENGTH_SHORT).show();
-            }
         }
     };
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+
+        m_bluetoothManager.removeBluetoothDeviceStatusChangedListener(this);
 
         BluetoothAdapter bluetoothAdapter = m_bluetoothManager.getBluetoothAdapter();
         bluetoothAdapter.cancelDiscovery();
@@ -113,5 +108,30 @@ public class BluetoothScanActivity extends AppCompatActivity
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l)
+    {
+        // Cancel the scan
+        BluetoothAdapter bluetoothAdapter = m_bluetoothManager.getBluetoothAdapter();
+        bluetoothAdapter.cancelDiscovery();
+
+        // Start the connection
+        BluetoothDevice bluetoothDevice = (BluetoothDevice)adapterView.getItemAtPosition(i);
+        m_bluetoothManager.startConnectionToDevice(bluetoothDevice);
+    }
+
+    @Override
+    public void onBluetoothDeviceStatusChanged(BluetoothDevice bluetoothDevice, BluetoothDeviceStatus newStatus)
+    {
+        runOnUiThread(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                m_bluetoothDeviceArrayAdapter.notifyDataSetChanged();
+            }
+        });
     }
 }

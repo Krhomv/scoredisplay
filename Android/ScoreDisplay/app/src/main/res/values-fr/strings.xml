@@ -16,4 +16,9 @@
     <string name="TEAM_2">EQUP 2</string>
     <string name="reset">RESET</string>
     <string name="connect_bluetooth">Connecter Afficheur Bluetooth</string>
+    <string name="bluetooth_scan_start_failed">Echec du démarrage de scan Bluetooth</string>
+    <string name="bluetooth_device_disconnected">DÉCONNECTÉ</string>
+    <string name="bluetooth_device_connecting">CONNEXION...</string>
+    <string name="bluetooth_device_connected">CONNECTÉ</string>
+    <string name="bluetooth_device_connection_failed">ECHEC</string>
 </resources>
