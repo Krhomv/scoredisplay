@@ -25,8 +25,7 @@ public class BluetoothManager implements BluetoothDeviceConnectionStateChangedLi
 
     public static void initialise(Context context)
     {
-        s_instance = new BluetoothManager();
-        s_instance.m_rxBleClient = RxBleClient.create(context);
+        s_instance = new BluetoothManager(context);
     }
 
     @Override
@@ -41,6 +40,7 @@ public class BluetoothManager implements BluetoothDeviceConnectionStateChangedLi
     /**
      * Main class
      */
+    private Context m_context;
     private BluetoothAdapter m_bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     private RxBleClient m_rxBleClient;
 
@@ -54,6 +54,12 @@ public class BluetoothManager implements BluetoothDeviceConnectionStateChangedLi
     public RxBleClient getRxBleClient()
     {
         return m_rxBleClient;
+    }
+
+    BluetoothManager(Context context)
+    {
+        m_context = context;
+        m_rxBleClient = RxBleClient.create(context);
     }
 
     public void addBluetoothDeviceStatusChangedListener(BluetoothDeviceConnectionStateChangedListener listener)
@@ -71,7 +77,7 @@ public class BluetoothManager implements BluetoothDeviceConnectionStateChangedLi
         BluetoothDeviceConnection connection = m_bluetoothDeviceConnections.get(macAddress);
         if (connection == null)
         {
-            connection = new BluetoothDeviceConnection(macAddress);
+            connection = new BluetoothDeviceConnection(m_context, macAddress);
             connection.addBluetoothDeviceStatusChangedListener(this);
             m_bluetoothDeviceConnections.put(macAddress, connection);
         }
