@@ -9,6 +9,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.krhom.scoredisplay.R;
@@ -41,6 +42,13 @@ public class BluetoothScanActivity extends AppCompatActivity implements AdapterV
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null)
+        {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+
         setContentView(R.layout.activity_bluetooth_scan);
         ButterKnife.bind(this);
         m_bluetoothManager = BluetoothManager.getInstance();
@@ -51,21 +59,28 @@ public class BluetoothScanActivity extends AppCompatActivity implements AdapterV
         startScanning();
     }
 
-    public void startScanning() {
-
-        if (isScanning()) {
+    public void startScanning()
+    {
+        if (m_scanDisposable != null)
+        {
             m_scanDisposable.dispose();
-        } else {
-            if (m_rxBleClient.isScanRuntimePermissionGranted()) {
+        }
+        else
+        {
+            if (m_rxBleClient.isScanRuntimePermissionGranted())
+            {
                 scanBleDevices();
-            } else {
+            }
+            else
+            {
                 m_shouldStartScanning = true;
                 ScanPermission.requestScanPermission(this, m_rxBleClient);
             }
         }
     }
 
-    private void scanBleDevices() {
+    private void scanBleDevices()
+    {
         m_scanDisposable = m_rxBleClient.scanBleDevices(
                         new ScanSettings.Builder()
                                 .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
@@ -82,29 +97,31 @@ public class BluetoothScanActivity extends AppCompatActivity implements AdapterV
 
     @Override
     public void onRequestPermissionsResult(final int requestCode, @NonNull final String[] permissions,
-                                           @NonNull final int[] grantResults) {
+                                           @NonNull final int[] grantResults)
+    {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
         if (ScanPermission.isScanPermissionGranted(requestCode, permissions, grantResults, m_rxBleClient)
-                && m_shouldStartScanning) {
+                && m_shouldStartScanning)
+        {
             m_shouldStartScanning = false;
             scanBleDevices();
         }
     }
 
     @Override
-    public void onPause() {
+    public void onPause()
+    {
         super.onPause();
 
-        if (isScanning()) {
-            /*
-             * Stop scanning in onPause callback.
-             */
+        if (m_scanDisposable != null)
+        {
             m_scanDisposable.dispose();
         }
     }
 
-    private void configureResultList() {
+    private void configureResultList()
+    {
         Set<RxBleDevice> connectedDevices = m_rxBleClient.getConnectedPeripherals();
         ArrayList<RxBleDevice> adapterArray = new ArrayList<>();
         adapterArray.addAll(connectedDevices);
@@ -116,19 +133,20 @@ public class BluetoothScanActivity extends AppCompatActivity implements AdapterV
         m_bluetoothDeviceListView.setOnItemClickListener(this);
     }
 
-    private boolean isScanning() {
-        return m_scanDisposable != null;
-    }
-
-    private void onScanFailure(Throwable throwable) {
-        if (throwable instanceof BleScanException) {
+    private void onScanFailure(Throwable throwable)
+    {
+        if (throwable instanceof BleScanException)
+        {
             //ScanExceptionHandler.handleException(this, (BleScanException) throwable);
-        } else {
+        }
+        else
+        {
             Log.w("ScanActivity", "Scan failed", throwable);
         }
     }
 
-    private void dispose() {
+    private void dispose()
+    {
         m_scanDisposable = null;
     }
 

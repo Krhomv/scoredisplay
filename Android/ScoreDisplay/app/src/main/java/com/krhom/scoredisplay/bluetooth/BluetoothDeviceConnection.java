@@ -69,8 +69,8 @@ public class BluetoothDeviceConnection
 
         // Prepare the connection observable
         m_connectionObservable = m_bleDevice.establishConnection(true)
-            .takeUntil(m_disconnectTriggerSubject)
-            .compose(ReplayingShare.instance());
+                .takeUntil(m_disconnectTriggerSubject)
+                .compose(ReplayingShare.instance());
 
         // How to listen for connection state changes
         Disposable connectionChangeDisposable = m_bleDevice.observeConnectionStateChanges()
@@ -133,7 +133,7 @@ public class BluetoothDeviceConnection
                         int characteristicIndex = 0;
                         for (Object o : args)
                         {
-                            resultMap.put(characteristics[characteristicIndex++], (byte[])o);
+                            resultMap.put(characteristics[characteristicIndex++], (byte[]) o);
                         }
                         return resultMap;
                     });
@@ -186,12 +186,11 @@ public class BluetoothDeviceConnection
             case DISCONNECTING:
                 break;
         }
-
     }
 
     private void onWriteSuccess(UUID characteristicUuid, byte[] data)
     {
-        Log.d("BT",  "Successfully wrote characteristic " + characteristicUuid + ": " + data);
+        Log.d("BT", "Successfully wrote characteristic " + characteristicUuid + ": " + data);
     }
 
     private void onWriteFailure(Throwable throwable)
@@ -204,7 +203,7 @@ public class BluetoothDeviceConnection
         for (Map.Entry<UUID, byte[]> mapEntry : resultMap.entrySet())
         {
             byte[] result = mapEntry.getValue();
-            Log.d("BT",  "Successfully read characteristic " + mapEntry.getKey() + ": " + Integer.toHexString(ValueInterpreter.getIntValue(result, result.length == 1 ? ValueInterpreter.FORMAT_UINT8 : ValueInterpreter.FORMAT_UINT32, 0)));
+            Log.d("BT", "Successfully read characteristic " + mapEntry.getKey() + ": " + Integer.toHexString(ValueInterpreter.getIntValue(result, result.length == 1 ? ValueInterpreter.FORMAT_UINT8 : ValueInterpreter.FORMAT_UINT32, 0)));
         }
     }
 

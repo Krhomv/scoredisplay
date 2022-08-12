@@ -7,15 +7,18 @@ import androidx.core.app.ActivityCompat;
 
 import com.polidea.rxandroidble2.RxBleClient;
 
-public class ScanPermission {
+public class ScanPermission
+{
 
-    private ScanPermission() {
+    private ScanPermission()
+    {
         // Utility class
     }
 
     private static final int REQUEST_PERMISSION_BLE_SCAN = 9358;
 
-    public static void requestScanPermission(final Activity activity, final RxBleClient client) {
+    public static void requestScanPermission(final Activity activity, final RxBleClient client)
+    {
         ActivityCompat.requestPermissions(
                 activity,
                 /*
@@ -28,16 +31,21 @@ public class ScanPermission {
     }
 
     public static boolean isScanPermissionGranted(final int requestCode, final String[] permissions,
-                                                  final int[] grantResults, RxBleClient client) {
-        if (requestCode != REQUEST_PERMISSION_BLE_SCAN) {
+                                                  final int[] grantResults, RxBleClient client)
+    {
+        if (requestCode != REQUEST_PERMISSION_BLE_SCAN)
+        {
             return false;
         }
 
         String[] recommendedScanRuntimePermissions = client.getRecommendedScanRuntimePermissions();
-        for (int i = 0; i < permissions.length; i++) {
-            for (String recommendedScanRuntimePermission : recommendedScanRuntimePermissions) {
+        for (int i = 0; i < permissions.length; i++)
+        {
+            for (String recommendedScanRuntimePermission : recommendedScanRuntimePermissions)
+            {
                 if (permissions[i].equals(recommendedScanRuntimePermission)
-                        && grantResults[i] == PackageManager.PERMISSION_GRANTED) {
+                        && grantResults[i] == PackageManager.PERMISSION_GRANTED)
+                {
                     return true;
                 }
             }

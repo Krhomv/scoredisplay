@@ -1,11 +1,9 @@
 package com.krhom.scoredisplay;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -20,11 +18,15 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
 
 import com.krhom.scoredisplay.bluetooth.BluetoothManager;
+import com.krhom.scoredisplay.bluetooth.BluetoothScanActivity;
+import com.krhom.scoredisplay.util.ConnectPermission;
+import com.krhom.scoredisplay.util.ScanPermission;
+import com.krhom.scoredisplay.util.ScoreBackgroundTextWatcher;
+import com.polidea.rxandroidble2.RxBleClient;
 import com.skydoves.colorpickerview.preference.ColorPickerPreferenceManager;
 
 import java.util.Timer;
@@ -43,26 +45,20 @@ enum Team
 public class MainActivity
         extends AppCompatActivity
         implements View.OnClickListener,
-                   View.OnFocusChangeListener,
-                   TextView.OnEditorActionListener,
-                   View.OnTouchListener,
-                   BluetoothManager.StatusChangedListener
+        View.OnLongClickListener,
+        View.OnFocusChangeListener,
+        TextView.OnEditorActionListener,
+        View.OnTouchListener,
+        BluetoothManager.StatusChangedListener
 
 {
-    static {
+    static
+    {
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
     }
 
     private static final int MAX_SCORE = 99;
     private static final int RESET_TIME_REQUIRED_MS = 1575;
-    private static final int TEAM1_PREFERENCE_ACTIVITY = 1;
-    private static final int TEAM2_PREFERENCE_ACTIVITY = 2;
-    private static final int BT_PERMISSION_REQUEST = 14;
-    private static final String[] BT_PERMISSIONS = new String[]{
-            Manifest.permission.BLUETOOTH,
-            Manifest.permission.BLUETOOTH_ADMIN,
-            Manifest.permission.ACCESS_COARSE_LOCATION,
-            Manifest.permission.ACCESS_FINE_LOCATION};
 
     private int m_team1Score = 0;
     private int m_team2Score = 0;
@@ -107,7 +103,10 @@ public class MainActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        BluetoothManager.initialise(this);
+        if (BluetoothManager.getInstance() == null)
+        {
+            BluetoothManager.initialise(this);
+        }
         m_bluetoothManager = BluetoothManager.getInstance();
         m_bluetoothManager.addStatusChangedListener(this);
 
@@ -115,6 +114,7 @@ public class MainActivity
         ButterKnife.bind(this);
 
         m_bluetoothButton.setOnClickListener(this);
+        m_bluetoothButton.setOnLongClickListener(this);
 
         m_team1Name.setOnClickListener(this);
         m_team1ScoreUp.setOnClickListener(this);
@@ -129,6 +129,10 @@ public class MainActivity
         m_team1ScoreText.setOnEditorActionListener(this);
         m_team2ScoreText.setOnFocusChangeListener(this);
         m_team2ScoreText.setOnEditorActionListener(this);
+
+        // Use this to make the background text adapt to the number of characters being typed
+        m_team1ScoreText.addTextChangedListener(new ScoreBackgroundTextWatcher(m_team1ScoreBackground));
+        m_team2ScoreText.addTextChangedListener(new ScoreBackgroundTextWatcher(m_team2ScoreBackground));
 
         PreferenceManager.setDefaultValues(this, R.xml.team1_preferences, false);
         PreferenceManager.setDefaultValues(this, R.xml.team2_preferences, false);
@@ -154,11 +158,11 @@ public class MainActivity
     {
         int oldTeam1Score = m_team1Score;
         int oldTeam2Score = m_team2Score;
-        
+
         switch (v.getId())
         {
             case R.id.bluetooth:
-                handleBluetoothButtonClicked();
+                handleBluetoothButtonClicked(false);
                 break;
             case R.id.team1Name:
                 showTeamSetupDialog(Team.TEAM1);
@@ -194,6 +198,18 @@ public class MainActivity
     }
 
     @Override
+    public boolean onLongClick(View v)
+    {
+        switch (v.getId())
+        {
+            case R.id.bluetooth:
+                handleBluetoothButtonClicked(true);
+                return true;
+        }
+        return false;
+    }
+
+    @Override
     public void onFocusChange(View view, boolean hasFocus)
     {
         if (!hasFocus)
@@ -204,7 +220,14 @@ public class MainActivity
                 {
                     String scoreString = m_team1ScoreText.getText().toString();
                     int oldScore = m_team1Score;
-                    m_team1Score = Integer.parseInt(scoreString);
+                    try
+                    {
+                        m_team1Score = Integer.parseInt(scoreString);
+                    }
+                    catch (Exception e)
+                    {
+                        m_team1Score = 0;
+                    }
                     String scoreStringLeadingZeros = String.format("%02d", m_team1Score);
 
                     if (oldScore != m_team1Score)
@@ -222,7 +245,14 @@ public class MainActivity
                 case R.id.team2Score:
                     String scoreString = m_team2ScoreText.getText().toString();
                     int oldScore = m_team2Score;
-                    m_team2Score = Integer.parseInt(scoreString);
+                    try
+                    {
+                        m_team2Score = Integer.parseInt(scoreString);
+                    }
+                    catch (Exception e)
+                    {
+                        m_team2Score = 0;
+                    }
                     String scoreStringLeadingZeros = String.format("%02d", m_team2Score);
 
                     if (oldScore != m_team2Score)
@@ -250,8 +280,8 @@ public class MainActivity
             {
                 Rect r = new Rect();
                 view.getGlobalVisibleRect(r);
-                int rawX = (int)ev.getRawX();
-                int rawY = (int)ev.getRawY();
+                int rawX = (int) ev.getRawX();
+                int rawY = (int) ev.getRawY();
                 if (!r.contains(rawX, rawY))
                 {
                     view.clearFocus();
@@ -262,7 +292,8 @@ public class MainActivity
     }
 
     @Override
-    public boolean onEditorAction(TextView textView, int keyCode, KeyEvent keyEvent) {
+    public boolean onEditorAction(TextView textView, int keyCode, KeyEvent keyEvent)
+    {
         // Defocus when the ok button is pressed when editing with the on-screen keyboard
         if (keyCode == KeyEvent.KEYCODE_ENDCALL)
         {
@@ -272,52 +303,61 @@ public class MainActivity
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults)
+    {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode) {
-            case BT_PERMISSION_REQUEST:
-                if (areAllBTPermissionsGranted())
-                {
-                    handleBluetoothButtonClicked();
-                }
-                break;
+
+        RxBleClient rxBleClient = m_bluetoothManager.getRxBleClient();
+        if (ScanPermission.isScanPermissionGranted(requestCode, permissions, grantResults, rxBleClient))
+        {
+            handleBluetoothButtonClicked(false);
+        }
+        else if (ConnectPermission.isRequestConnectionPermissionGranted(requestCode, permissions, grantResults, rxBleClient))
+        {
+            handleBluetoothButtonClicked(false);
         }
     }
 
     private boolean areAllBTPermissionsGranted()
     {
-        for (String permission : BT_PERMISSIONS)
-        {
-            if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED)
-            {
-                return false;
-            }
-        }
+        RxBleClient rxBleClient = m_bluetoothManager.getRxBleClient();
 
-        return true;
+        return rxBleClient.isConnectRuntimePermissionGranted()
+                && rxBleClient.isScanRuntimePermissionGranted();
+    }
+
+    private void launchBTScanActivity()
+    {
+        Intent bluetoothIntent = new Intent(this, BluetoothScanActivity.class);
+        startActivity(bluetoothIntent);
     }
 
     @SuppressLint("MissingPermission")
-    private void handleBluetoothButtonClicked()
+    private void handleBluetoothButtonClicked(boolean longClick)
     {
         if (areAllBTPermissionsGranted())
         {
             BluetoothAdapter bluetoothAdapter = m_bluetoothManager.getBluetoothAdapter();
             if (bluetoothAdapter.isEnabled())
             {
-//                Intent bluetoothIntent = new Intent(this, BluetoothScanActivity.class);
-//                startActivity(bluetoothIntent);
-                switch (m_bluetoothManager.getStatus())
+                if (longClick)
                 {
-                    case ERROR:
-                    case DISCONNECTED:
-                        m_bluetoothManager.startScanAndConnect();
-                        break;
-                    case SCANNING:
-                    case CONNECTING:
-                    case CONNECTED:
-                        m_bluetoothManager.stopScanAndDisconnect();
-                        break;
+                    launchBTScanActivity();
+                }
+                else
+                {
+                    switch (m_bluetoothManager.getStatus())
+                    {
+                        case ERROR:
+                        case DISCONNECTED:
+                            m_bluetoothManager.startScanAndConnect();
+                            break;
+                        case SCANNING:
+                        case CONNECTING:
+                        case CONNECTED:
+                            m_bluetoothManager.stopScanAndDisconnect();
+                            break;
+                    }
                 }
             }
             else
@@ -328,7 +368,16 @@ public class MainActivity
         }
         else
         {
-            ActivityCompat.requestPermissions(this, BT_PERMISSIONS, BT_PERMISSION_REQUEST);
+            RxBleClient rxBleClient = m_bluetoothManager.getRxBleClient();
+
+            if (!rxBleClient.isScanRuntimePermissionGranted())
+            {
+                ScanPermission.requestScanPermission(this, rxBleClient);
+            }
+            if (!rxBleClient.isConnectRuntimePermissionGranted())
+            {
+                ConnectPermission.requestConnectionPermission(this, rxBleClient);
+            }
         }
     }
 
@@ -518,7 +567,7 @@ public class MainActivity
         }
         return false;
     }
-    
+
     private void sendAllValuesToBTDevice()
     {
         if (m_bluetoothManager.getStatus() == BluetoothManager.Status.CONNECTED)
@@ -579,7 +628,9 @@ public class MainActivity
             case ERROR:
                 break;
         }
-        
+
         setBluetoothButtonState(newStatus);
     }
+
+
 }

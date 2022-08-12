@@ -23,7 +23,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 
 
-
 public class BluetoothManager implements BluetoothDeviceConnection.StatusChangedListener
 {
     public static final UUID SERVICE = UUID.fromString("00000000-6f1e-40f5-909b-8e50c592dca9");
@@ -52,6 +51,7 @@ public class BluetoothManager implements BluetoothDeviceConnection.StatusChanged
      * Singleton
      */
     private static BluetoothManager s_instance;
+
     public static BluetoothManager getInstance()
     {
         return s_instance;
@@ -81,6 +81,7 @@ public class BluetoothManager implements BluetoothDeviceConnection.StatusChanged
     {
         return m_bluetoothAdapter;
     }
+
     public RxBleClient getRxBleClient()
     {
         return m_rxBleClient;
@@ -131,11 +132,19 @@ public class BluetoothManager implements BluetoothDeviceConnection.StatusChanged
 
     public void stopScanAndDisconnect()
     {
-        if (m_preferredDeviceMacAddress != null)
+        for (BluetoothDeviceConnection connection : m_bluetoothDeviceConnections.values())
         {
-            disconnectFromDevice(m_preferredDeviceMacAddress);
+            connection.disconnect();
+            connection.dispose();
         }
-        m_scanDisposable.dispose();
+
+        m_bluetoothDeviceConnections.clear();;
+
+        if (m_scanDisposable != null)
+        {
+            m_scanDisposable.dispose();
+        }
+
         setStatus(Status.DISCONNECTED);
     }
 
@@ -159,6 +168,7 @@ public class BluetoothManager implements BluetoothDeviceConnection.StatusChanged
             connection.disconnect();
         }
     }
+
     public RxBleConnection.RxBleConnectionState getBluetoothDeviceConnectionState(String macAddress)
     {
         BluetoothDeviceConnection deviceConnection = m_bluetoothDeviceConnections.get(macAddress);
@@ -267,7 +277,10 @@ public class BluetoothManager implements BluetoothDeviceConnection.StatusChanged
     {
         m_preferredDeviceMacAddress = scanResult.getBleDevice().getMacAddress();
         connectToDevice(m_preferredDeviceMacAddress);
-        m_scanDisposable.dispose();
+        if (m_scanDisposable != null)
+        {
+            m_scanDisposable.dispose();
+        }
     }
 
     private void onScanFailure(Throwable throwable)
@@ -293,6 +306,11 @@ public class BluetoothManager implements BluetoothDeviceConnection.StatusChanged
                 {
                     setStatus(Status.CONNECTED);
                 }
+                else if (m_preferredDeviceMacAddress == null)
+                {
+                    m_preferredDeviceMacAddress = macAddress;
+                    setStatus(Status.CONNECTED);
+                }
                 break;
             case DISCONNECTED:
                 if (macAddress == m_preferredDeviceMacAddress)
@@ -310,6 +328,12 @@ public class BluetoothManager implements BluetoothDeviceConnection.StatusChanged
                     startScanning();
                 }
                 break;
+        }
+
+        // Further broadcast to listeners
+        for (BluetoothDeviceConnection.StatusChangedListener listener : m_bluetoothDeviceConnectionStatusChangedListeners)
+        {
+            listener.onBluetoothDeviceConnectionStatusChanged(macAddress, newStatus);
         }
     }
 }

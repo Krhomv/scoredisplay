@@ -55,7 +55,7 @@
                 android:text="TEAM 1"
                 android:textAlignment="center"
                 android:textColor="@color/team1Color"
-                android:textSize="38sp" />
+                android:textSize="@dimen/_30ssp" />
 
             <Button
                 style="@style/Widget.AppCompat.Button.Borderless"
@@ -71,7 +71,7 @@
                 android:text="TEAM 2"
                 android:textAlignment="center"
                 android:textColor="@color/team2Color"
-                android:textSize="38sp" />
+                android:textSize="@dimen/_30ssp" />
         </LinearLayout>
 
         <Space
@@ -85,6 +85,12 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:orientation="horizontal">
+
+            <Space
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                />
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -104,10 +110,10 @@
                     android:shadowRadius="12"
                     android:text="▲"
                     android:textColor="@color/team1Color"
-                    android:textSize="48sp" />
+                    android:textSize="@dimen/_36ssp" />
 
                 <FrameLayout
-                    android:layout_width="180dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingTop="30dp"
                     android:paddingBottom="26dp">
@@ -117,7 +123,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="@null"
-                        android:ems="10"
+                        android:ems="2"
                         android:fontFamily="@font/dseg_regular"
                         android:inputType="number"
                         android:imeOptions="actionDone"
@@ -127,25 +133,23 @@
                         android:shadowRadius="12"
                         android:singleLine="true"
                         android:text="00"
+                        android:textAlignment="center"
                         android:maxLength="2"
-                        android:paddingRight="10dp"
-                        android:textAlignment="textEnd"
                         android:textColor="@color/team1Color"
-                        android:textSize="96sp" />
+                        android:textSize="@dimen/_72ssp" />
 
                     <TextView
                         android:id="@+id/team1ScoreBackground"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="@null"
-                        android:ems="10"
+                        android:ems="2"
                         android:fontFamily="@font/dseg_regular"
-                        android:paddingRight="10dp"
                         android:singleLine="true"
                         android:text="88"
-                        android:textAlignment="textEnd"
+                        android:textAlignment="center"
                         android:textColor="@color/team1Color"
-                        android:textSize="96sp"
+                        android:textSize="@dimen/_72ssp"
                         android:translationZ="-10dp" 
                         android:alpha="0.1"
                         />
@@ -164,14 +168,15 @@
                     android:shadowRadius="12"
                     android:text="▼"
                     android:textColor="@color/team1Color"
-                    android:textSize="48sp" />
+                    android:textSize="@dimen/_36ssp" />
 
 
             </LinearLayout>
 
             <Space
-                android:layout_width="20dp"
-                android:layout_height="match_parent"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
                 />
 
             <LinearLayout
@@ -192,10 +197,10 @@
                     android:shadowRadius="12"
                     android:text="▲"
                     android:textColor="@color/team2Color"
-                    android:textSize="48sp" />
+                    android:textSize="@dimen/_36ssp" />
 
                 <FrameLayout
-                    android:layout_width="180dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:paddingTop="30dp"
                     android:paddingBottom="26dp">
@@ -205,7 +210,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="@null"
-                        android:ems="10"
+                        android:ems="2"
                         android:fontFamily="@font/dseg_regular"
                         android:inputType="number"
                         android:imeOptions="actionDone"
@@ -215,25 +220,23 @@
                         android:shadowRadius="12"
                         android:singleLine="true"
                         android:text="00"
-                        android:textAlignment="textEnd"
-                        android:paddingRight="10dp"
+                        android:textAlignment="center"
                         android:textColor="@color/team2Color"
                         android:maxLength="2"
-                        android:textSize="96sp" />
+                        android:textSize="@dimen/_72ssp" />
 
                     <TextView
                         android:id="@+id/team2ScoreBackground"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="@null"
-                        android:ems="10"
+                        android:ems="2"
                         android:fontFamily="@font/dseg_regular"
                         android:singleLine="true"
                         android:text="88"
-                        android:textAlignment="textEnd"
-                        android:paddingRight="10dp"
+                        android:textAlignment="center"
                         android:textColor="@color/team2Color"
-                        android:textSize="96sp"
+                        android:textSize="@dimen/_72ssp"
                         android:translationZ="-10dp"
                         android:alpha="0.1"/>
                 </FrameLayout>
@@ -251,8 +254,14 @@
                     android:shadowRadius="12"
                     android:text="▼"
                     android:textColor="@color/team2Color"
-                    android:textSize="48sp" />
+                    android:textSize="@dimen/_36ssp" />
             </LinearLayout>
+
+            <Space
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                />
         </LinearLayout>
 
         <Space
@@ -283,7 +292,7 @@
                 android:shadowRadius="12"
                 android:text="@string/reset"
                 android:textColor="@color/team1Color"
-                android:textSize="38sp" />
+                android:textSize="@dimen/_30ssp" />
 
             <Button
                 android:id="@+id/team2ScoreReset"
@@ -300,7 +309,7 @@
                 android:shadowRadius="12"
                 android:text="@string/reset"
                 android:textColor="@color/team2Color"
-                android:textSize="38sp" />
+                android:textSize="@dimen/_30ssp" />
         </LinearLayout>
     </LinearLayout>
 

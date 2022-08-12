@@ -7,15 +7,18 @@ import androidx.core.app.ActivityCompat;
 
 import com.polidea.rxandroidble2.RxBleClient;
 
-public class ConnectPermission {
+public class ConnectPermission
+{
 
-    private ConnectPermission() {
+    private ConnectPermission()
+    {
         // Utility class
     }
 
     private static final int REQUEST_PERMISSION_BLE_CONNECT = 9359;
 
-    public static void requestConnectionPermission(final Activity activity, final RxBleClient client) {
+    public static void requestConnectionPermission(final Activity activity, final RxBleClient client)
+    {
         ActivityCompat.requestPermissions(
                 activity,
                 /*
@@ -28,16 +31,21 @@ public class ConnectPermission {
     }
 
     public static boolean isRequestConnectionPermissionGranted(final int requestCode, final String[] permissions,
-                                                               final int[] grantResults, RxBleClient client) {
-        if (requestCode != REQUEST_PERMISSION_BLE_CONNECT) {
+                                                               final int[] grantResults, RxBleClient client)
+    {
+        if (requestCode != REQUEST_PERMISSION_BLE_CONNECT)
+        {
             return false;
         }
 
         String[] recommendedConnectRuntimePermissions = client.getRecommendedConnectRuntimePermissions();
-        for (int i = 0; i < permissions.length; i++) {
-            for (String recommendedScanRuntimePermission : recommendedConnectRuntimePermissions) {
+        for (int i = 0; i < permissions.length; i++)
+        {
+            for (String recommendedScanRuntimePermission : recommendedConnectRuntimePermissions)
+            {
                 if (permissions[i].equals(recommendedScanRuntimePermission)
-                        && grantResults[i] == PackageManager.PERMISSION_GRANTED) {
+                        && grantResults[i] == PackageManager.PERMISSION_GRANTED)
+                {
                     return true;
                 }
             }

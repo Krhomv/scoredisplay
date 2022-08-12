@@ -95,21 +95,18 @@ public class BluetoothDeviceArrayAdapter extends ArrayAdapter<RxBleDevice>
 
     void addScanResult(ScanResult bleScanResult)
     {
-        String name = bleScanResult.getScanRecord().getDeviceName();
-        if (name != null && !name.isEmpty())
+        RxBleDevice bleDevice = bleScanResult.getBleDevice();
+        String macAddress = bleDevice.getMacAddress();
+        if (!m_items.stream().filter(x -> x.getMacAddress().equals(macAddress)).findFirst().isPresent())
         {
-            RxBleDevice bleDevice = bleScanResult.getBleDevice();
-            String macAddress = bleDevice.getMacAddress();
-            if (!m_items.stream().filter(x -> x.getMacAddress().equals(macAddress)).findFirst().isPresent())
-            {
-                m_items.add(bleScanResult.getBleDevice());
-                Collections.sort(m_items, SORTING_COMPARATOR);
-                notifyDataSetChanged();
-            }
+            m_items.add(bleScanResult.getBleDevice());
+            Collections.sort(m_items, SORTING_COMPARATOR);
+            notifyDataSetChanged();
         }
     }
 
-    void clearScanResults() {
+    void clearScanResults()
+    {
         m_items.clear();
         notifyDataSetChanged();
     }
