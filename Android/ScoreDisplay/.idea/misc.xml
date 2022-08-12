@@ -4,11 +4,13 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Dev/git/scoredisplay/Android/ScoreDisplay/app/src/main/res/drawable/ic_baseline_bluetooth_24.xml" value="0.719" />
-        <entry key="..\:/Dev/git/scoredisplay/Android/ScoreDisplay/app/src/main/res/layout-land/activity_main.xml" value="0.5754716981132075" />
+        <entry key="..\:/Dev/git/scoredisplay/Android/ScoreDisplay/app/src/main/res/drawable/ic_baseline_bluetooth_disabled_24.xml" value="0.48" />
+        <entry key="..\:/Dev/git/scoredisplay/Android/ScoreDisplay/app/src/main/res/drawable/ic_baseline_bluetooth_searching_24.xml" value="0.48" />
+        <entry key="..\:/Dev/git/scoredisplay/Android/ScoreDisplay/app/src/main/res/layout-land/activity_main.xml" value="0.3209509658246657" />
         <entry key="..\:/Dev/git/scoredisplay/Android/ScoreDisplay/app/src/main/res/layout-land/item_discovery_service.xml" value="0.3672509619495511" />
         <entry key="..\:/Dev/git/scoredisplay/Android/ScoreDisplay/app/src/main/res/layout/activity_bluetooth_scan.xml" value="0.2356902356902357" />
         <entry key="..\:/Dev/git/scoredisplay/Android/ScoreDisplay/app/src/main/res/layout/activity_example1.xml" value="0.37484329293773505" />
-        <entry key="..\:/Dev/git/scoredisplay/Android/ScoreDisplay/app/src/main/res/layout/activity_main.xml" value="0.7669944420692604" />
+        <entry key="..\:/Dev/git/scoredisplay/Android/ScoreDisplay/app/src/main/res/layout/activity_main.xml" value="0.33" />
         <entry key="..\:/Dev/git/scoredisplay/Android/ScoreDisplay/app/src/main/res/layout/bluetooth_device_view.xml" value="0.7669944420692604" />
         <entry key="..\:/Dev/git/scoredisplay/Android/ScoreDisplay/app/src/main/res/layout/item_discovery_service.xml" value="0.37484329293773505" />
         <entry key="..\:/Dev/git/scoredisplay/Android/ScoreDisplay/app/src/main/res/layout/sample_bluetooth_device.xml" value="0.5677640017101325" />

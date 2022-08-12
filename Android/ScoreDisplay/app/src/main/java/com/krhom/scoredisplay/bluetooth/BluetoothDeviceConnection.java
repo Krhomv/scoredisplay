@@ -1,7 +1,5 @@
 package com.krhom.scoredisplay.bluetooth;
 
-import android.app.Activity;
-import android.bluetooth.BluetoothGattCharacteristic;
 import android.content.Context;
 import android.util.Log;
 
@@ -11,7 +9,11 @@ import com.polidea.rxandroidble2.RxBleConnection;
 import com.polidea.rxandroidble2.RxBleDevice;
 import com.polidea.rxandroidble2.helpers.ValueInterpreter;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -24,29 +26,44 @@ import io.reactivex.subjects.PublishSubject;
 
 public class BluetoothDeviceConnection
 {
-    private static final UUID CHARACTERISTIC_UUID = UUID.fromString("0000FFE1-0000-1000-8000-00805F9B34FB");
-
     private Context m_context;
+    private String m_macAddress;
     private RxBleClient m_rxBleClient;
     private RxBleDevice m_bleDevice;
     private Observable<RxBleConnection> m_connectionObservable;
     private final CompositeDisposable m_compositeDisposable = new CompositeDisposable();
     private PublishSubject<Boolean> m_disconnectTriggerSubject = PublishSubject.create();
-    private Set<BluetoothDeviceConnectionStateChangedListener> m_bluetoothDeviceConnectionStateChangedListeners = new HashSet();
+    private Set<StatusChangedListener> m_statusChangedListeners = new HashSet();
 
-    public void addBluetoothDeviceStatusChangedListener(BluetoothDeviceConnectionStateChangedListener listener)
+    private Status m_currentStatus = Status.DISCONNECTED;
+
+    public enum Status
     {
-        m_bluetoothDeviceConnectionStateChangedListeners.add(listener);
+        DISCONNECTED,
+        CONNECTING,
+        CONNECTED,
+        FAILED,
     }
 
-    public void removeBluetoothDeviceStatusChangedListener(BluetoothDeviceConnectionStateChangedListener listener)
+    public interface StatusChangedListener
     {
-        m_bluetoothDeviceConnectionStateChangedListeners.remove(listener);
+        void onBluetoothDeviceConnectionStatusChanged(String macAddress, Status newStatus);
+    }
+
+    public void addStatusChangedListener(StatusChangedListener listener)
+    {
+        m_statusChangedListeners.add(listener);
+    }
+
+    public void removeStatusChangedListener(StatusChangedListener listener)
+    {
+        m_statusChangedListeners.remove(listener);
     }
 
     BluetoothDeviceConnection(Context context, String macAddress)
     {
         m_context = context;
+        m_macAddress = macAddress;
         m_rxBleClient = BluetoothManager.getInstance().getRxBleClient();
         m_bleDevice = m_rxBleClient.getBleDevice(macAddress);
 
@@ -65,26 +82,20 @@ public class BluetoothDeviceConnection
     public void connect()
     {
         final Disposable connectionDisposable = m_connectionObservable
-                .flatMapSingle(RxBleConnection::discoverServices)
-                .flatMapSingle(rxBleDeviceServices ->
-                {
-                    Single<BluetoothGattCharacteristic> characteristic = rxBleDeviceServices.getCharacteristic(CHARACTERISTIC_UUID);
-                    return characteristic;
-                })
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(
-                        characteristic -> {
-                            onConnected();
-                        },
-                        this::onConnectionFailure,
-                        this::onConnectionFinished
-                );
+                .subscribe(this::onConnectionReceived, this::onConnectionFailure);
 
         m_compositeDisposable.add(connectionDisposable);
     }
 
-    public void disconnect() {
+    public void disconnect()
+    {
         m_disconnectTriggerSubject.onNext(true);
+    }
+
+    public void dispose()
+    {
+        m_compositeDisposable.dispose();
     }
 
     public RxBleConnection.RxBleConnectionState getConnectionState()
@@ -92,67 +103,114 @@ public class BluetoothDeviceConnection
         return m_bleDevice.getConnectionState();
     }
 
-    public void send(String message)
+    public void writeCharacteristic(UUID characteristicUuid, byte[] data)
     {
         final Disposable sendDisposable = m_connectionObservable
                 .firstOrError()
-                .flatMap(rxBleConnection -> rxBleConnection.writeCharacteristic(CHARACTERISTIC_UUID, message.getBytes()))
+                .flatMap(rxBleConnection -> rxBleConnection.writeCharacteristic(characteristicUuid, data))
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
-                        bytes -> onWriteSuccess(message),
+                        bytes -> onWriteSuccess(characteristicUuid, data),
                         this::onWriteFailure
                 );
-
-        m_compositeDisposable.add(sendDisposable);
     }
 
-    private void onConnected()
+    public void readCharacteristics(UUID[] characteristics)
     {
-        // Setup the receive notification
-        final Disposable notificationDisposable = m_connectionObservable
-                .flatMap(rxBleConnection -> rxBleConnection.setupNotification(CHARACTERISTIC_UUID))
-                .doOnNext(notificationObservable -> ((Activity)m_context).runOnUiThread(this::notificationHasBeenSetUp))
-                .flatMap(notificationObservable -> notificationObservable)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::onNotificationReceived, this::onNotificationSetupFailure);
+        final Disposable sendDisposable = m_connectionObservable
+                .firstOrError()
+                .flatMap(rxBleConnection ->
+                {
+                    List<Single<byte[]>> observables = new ArrayList<>();
+                    for (UUID characteristic : characteristics)
+                    {
+                        observables.add(rxBleConnection.readCharacteristic(characteristic));
+                    }
+                    return Single.zip(observables, args ->
+                    {
+                        Map<UUID, byte[]> resultMap = new HashMap<>();
 
-        m_compositeDisposable.add(notificationDisposable);
+                        int characteristicIndex = 0;
+                        for (Object o : args)
+                        {
+                            resultMap.put(characteristics[characteristicIndex++], (byte[])o);
+                        }
+                        return resultMap;
+                    });
+                }).subscribe(
+                        resultMap ->
+                        {
+                            onReadSuccess(resultMap);
+                        },
+                        throwable ->
+                        {
+                            onReadFailure(throwable);
+                        }
+                );
+    }
+
+    private void setStatus(Status newStatus)
+    {
+        if (newStatus != m_currentStatus)
+        {
+            m_currentStatus = newStatus;
+            for (StatusChangedListener listener : m_statusChangedListeners)
+            {
+                listener.onBluetoothDeviceConnectionStatusChanged(m_macAddress, newStatus);
+            }
+        }
+    }
+
+    private void onConnectionReceived(RxBleConnection connection)
+    {
     }
 
     private void onConnectionFailure(Throwable throwable)
     {
-    }
-
-    private void onConnectionFinished()
-    {
+        setStatus(Status.FAILED);
     }
 
     private void onConnectionStateChange(RxBleConnection.RxBleConnectionState newState)
     {
-        for (BluetoothDeviceConnectionStateChangedListener listener : m_bluetoothDeviceConnectionStateChangedListeners)
+        switch (newState)
         {
-            listener.onBluetoothDeviceStatusChanged(m_bleDevice.getMacAddress(), newState);
+            case CONNECTING:
+                setStatus(Status.CONNECTING);
+                break;
+            case CONNECTED:
+                setStatus(Status.CONNECTED);
+                break;
+            case DISCONNECTED:
+                setStatus(Status.DISCONNECTED);
+                break;
+            case DISCONNECTING:
+                break;
         }
+
     }
 
-    private void onWriteSuccess(String message) {
-        Log.d("BT",  "Successfully sent message: " + message);
+    private void onWriteSuccess(UUID characteristicUuid, byte[] data)
+    {
+        Log.d("BT",  "Successfully wrote characteristic " + characteristicUuid + ": " + data);
     }
 
-    private void onWriteFailure(Throwable throwable) {
+    private void onWriteFailure(Throwable throwable)
+    {
         Log.d("BT", "Write error: " + throwable);
     }
 
-    private void onNotificationReceived(byte[] bytes) {
-        Log.d("BT", "Change: " + ValueInterpreter.getStringValue(bytes, 0));
+    private void onReadSuccess(Map<UUID, byte[]> resultMap)
+    {
+        for (Map.Entry<UUID, byte[]> mapEntry : resultMap.entrySet())
+        {
+            byte[] result = mapEntry.getValue();
+            Log.d("BT",  "Successfully read characteristic " + mapEntry.getKey() + ": " + Integer.toHexString(ValueInterpreter.getIntValue(result, result.length == 1 ? ValueInterpreter.FORMAT_UINT8 : ValueInterpreter.FORMAT_UINT32, 0)));
+        }
     }
 
-    private void onNotificationSetupFailure(Throwable throwable) {
-        Log.d("BT", "Notifications error: " + throwable);
-    }
-
-    private void notificationHasBeenSetUp() {
-        Log.d("BT", "Notifications has been set up");
+    private void onReadFailure(Throwable throwable)
+    {
+        Log.d("BT", "Read error: " + throwable);
     }
 
 }

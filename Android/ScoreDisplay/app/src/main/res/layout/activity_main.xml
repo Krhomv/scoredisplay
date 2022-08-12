@@ -8,16 +8,7 @@
     android:focusableInTouchMode="true"
     tools:context=".MainActivity">
 
-    <ImageButton
-        style="@style/Widget.AppCompat.Button.Borderless"
-        android:id="@+id/bluetooth"
-        android:layout_width="75dp"
-        android:layout_height="75dp"
-        android:alpha="0.4"
-        app:tint="@color/bluetoothOff"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_baseline_bluetooth_disabled_24" />
+
 
     <LinearLayout
         android:id="@+id/linearLayout"
@@ -28,10 +19,19 @@
         tools:layout_editor_absoluteX="1dp"
         tools:layout_editor_absoluteY="1dp">
 
+        <ImageButton
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:id="@+id/bluetooth"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:alpha="0.6"
+            app:tint="@color/bluetoothDeviceDisconnected"
+            app:srcCompat="@drawable/ic_baseline_bluetooth_disabled_24"/>
+
         <Space
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_weight="0.5"
             />
 
         <LinearLayout

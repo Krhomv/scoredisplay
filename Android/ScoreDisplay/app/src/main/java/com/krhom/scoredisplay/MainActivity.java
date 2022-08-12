@@ -25,12 +25,13 @@ import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
 
 import com.krhom.scoredisplay.bluetooth.BluetoothManager;
-import com.krhom.scoredisplay.bluetooth.BluetoothScanActivity;
 import com.skydoves.colorpickerview.preference.ColorPickerPreferenceManager;
 
 import java.util.Timer;
 import java.util.TimerTask;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 
 enum Team
@@ -44,7 +45,8 @@ public class MainActivity
         implements View.OnClickListener,
                    View.OnFocusChangeListener,
                    TextView.OnEditorActionListener,
-                   View.OnTouchListener
+                   View.OnTouchListener,
+                   BluetoothManager.StatusChangedListener
 
 {
     static {
@@ -65,25 +67,39 @@ public class MainActivity
     private int m_team1Score = 0;
     private int m_team2Score = 0;
 
-    private ImageButton m_bluetoothButton;
+    @BindView(R.id.bluetooth)
+    public ImageButton m_bluetoothButton;
 
-    private Button m_team1Name;
-    private Button m_team1ScoreUp;
-    private Button m_team1ScoreDown;
-    private Button m_team1ScoreReset;
-    private EditText m_team1ScoreText;
-    private TextView m_team1ScoreBackground;
+    @BindView(R.id.team1Name)
+    public Button m_team1Name;
+    @BindView(R.id.team1ScoreUp)
+    public Button m_team1ScoreUp;
+    @BindView(R.id.team1ScoreDown)
+    public Button m_team1ScoreDown;
+    @BindView(R.id.team1ScoreReset)
+    public Button m_team1ScoreReset;
+    @BindView(R.id.team1Score)
+    public EditText m_team1ScoreText;
+    @BindView(R.id.team1ScoreBackground)
+    public TextView m_team1ScoreBackground;
 
-    private Button m_team2Name;
-    private Button m_team2ScoreUp;
-    private Button m_team2ScoreDown;
-    private Button m_team2ScoreReset;
-    private TextView m_team2ScoreBackground;
-
-    private EditText m_team2ScoreText;
+    @BindView(R.id.team2Name)
+    public Button m_team2Name;
+    @BindView(R.id.team2ScoreUp)
+    public Button m_team2ScoreUp;
+    @BindView(R.id.team2ScoreDown)
+    public Button m_team2ScoreDown;
+    @BindView(R.id.team2ScoreReset)
+    public Button m_team2ScoreReset;
+    @BindView(R.id.team2Score)
+    public EditText m_team2ScoreText;
+    @BindView(R.id.team2ScoreBackground)
+    public TextView m_team2ScoreBackground;
 
     private Timer m_team1Timer;
     private Timer m_team2Timer;
+
+    BluetoothManager m_bluetoothManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -92,22 +108,11 @@ public class MainActivity
         setContentView(R.layout.activity_main);
 
         BluetoothManager.initialise(this);
+        m_bluetoothManager = BluetoothManager.getInstance();
+        m_bluetoothManager.addStatusChangedListener(this);
 
-        m_bluetoothButton = (ImageButton) findViewById(R.id.bluetooth);
-
-        m_team1Name = (Button) findViewById(R.id.team1Name);
-        m_team1ScoreUp = (Button) findViewById(R.id.team1ScoreUp);
-        m_team1ScoreDown = (Button) findViewById(R.id.team1ScoreDown);
-        m_team1ScoreReset = (Button) findViewById(R.id.team1ScoreReset);
-        m_team1ScoreText = (EditText) findViewById(R.id.team1Score);
-        m_team1ScoreBackground = (TextView) findViewById(R.id.team1ScoreBackground);
-
-        m_team2Name = (Button) findViewById(R.id.team2Name);
-        m_team2ScoreUp = (Button) findViewById(R.id.team2ScoreUp);
-        m_team2ScoreDown = (Button) findViewById(R.id.team2ScoreDown);
-        m_team2ScoreReset = (Button) findViewById(R.id.team2ScoreReset);
-        m_team2ScoreText = (EditText) findViewById(R.id.team2Score);
-        m_team2ScoreBackground = (TextView) findViewById(R.id.team2ScoreBackground);
+        // Bind the views
+        ButterKnife.bind(this);
 
         m_bluetoothButton.setOnClickListener(this);
 
@@ -131,7 +136,6 @@ public class MainActivity
         getSupportActionBar().hide();
 
         applyStoredPreferences();
-
     }
 
     @Override
@@ -140,6 +144,9 @@ public class MainActivity
         super.onResume();
 
         applyStoredPreferences();
+        sendAllValuesToBTDevice();
+
+        setBluetoothButtonState(m_bluetoothManager.getStatus());
     }
 
     @Override
@@ -175,12 +182,14 @@ public class MainActivity
 
         if (m_team1Score != oldTeam1Score)
         {
-            refreshTeam1ScoreDisplay();
+            updateTeam1ScoreDisplay();
+            sendTeam1ScoreToBTDevice();
         }
 
         if (m_team2Score != oldTeam2Score)
         {
-            refreshTeam2ScoreDisplay();
+            updateTeam2ScoreDisplay();
+            sendTeam2ScoreToBTDevice();
         }
     }
 
@@ -194,8 +203,14 @@ public class MainActivity
                 case R.id.team1Score:
                 {
                     String scoreString = m_team1ScoreText.getText().toString();
+                    int oldScore = m_team1Score;
                     m_team1Score = Integer.parseInt(scoreString);
                     String scoreStringLeadingZeros = String.format("%02d", m_team1Score);
+
+                    if (oldScore != m_team1Score)
+                    {
+                        sendTeam1ScoreToBTDevice();
+                    }
 
                     if (!scoreString.equals(scoreStringLeadingZeros))
                     {
@@ -206,12 +221,19 @@ public class MainActivity
 
                 case R.id.team2Score:
                     String scoreString = m_team2ScoreText.getText().toString();
+                    int oldScore = m_team2Score;
                     m_team2Score = Integer.parseInt(scoreString);
                     String scoreStringLeadingZeros = String.format("%02d", m_team2Score);
+
+                    if (oldScore != m_team2Score)
+                    {
+                        sendTeam1ScoreToBTDevice();
+                    }
 
                     if (!scoreString.equals(scoreStringLeadingZeros))
                     {
                         m_team2ScoreText.setText(scoreStringLeadingZeros);
+                        sendTeam2ScoreToBTDevice();
                     }
                     break;
             }
@@ -280,11 +302,23 @@ public class MainActivity
     {
         if (areAllBTPermissionsGranted())
         {
-            BluetoothAdapter bluetoothAdapter = BluetoothManager.getInstance().getBluetoothAdapter();
+            BluetoothAdapter bluetoothAdapter = m_bluetoothManager.getBluetoothAdapter();
             if (bluetoothAdapter.isEnabled())
             {
-                Intent bluetoothIntent = new Intent(this, BluetoothScanActivity.class);
-                startActivity(bluetoothIntent);
+//                Intent bluetoothIntent = new Intent(this, BluetoothScanActivity.class);
+//                startActivity(bluetoothIntent);
+                switch (m_bluetoothManager.getStatus())
+                {
+                    case ERROR:
+                    case DISCONNECTED:
+                        m_bluetoothManager.startScanAndConnect();
+                        break;
+                    case SCANNING:
+                    case CONNECTING:
+                    case CONNECTED:
+                        m_bluetoothManager.stopScanAndDisconnect();
+                        break;
+                }
             }
             else
             {
@@ -352,12 +386,12 @@ public class MainActivity
         m_team2ScoreBackground.setTextColor(color);
     }
 
-    private void refreshTeam1ScoreDisplay()
+    private void updateTeam1ScoreDisplay()
     {
         m_team1ScoreText.setText(String.format("%02d", m_team1Score));
     }
 
-    private void refreshTeam2ScoreDisplay()
+    private void updateTeam2ScoreDisplay()
     {
         m_team2ScoreText.setText(String.format("%02d", m_team2Score));
     }
@@ -370,6 +404,33 @@ public class MainActivity
         anim.setRepeatMode(Animation.REVERSE);
         anim.setRepeatCount(Animation.INFINITE);
         return anim;
+    }
+
+    private void setBluetoothButtonState(BluetoothManager.Status status)
+    {
+        switch (status)
+        {
+            case DISCONNECTED:
+                m_bluetoothButton.setColorFilter(ContextCompat.getColor(this, R.color.bluetoothDeviceDisconnected));
+                m_bluetoothButton.setImageResource(R.drawable.ic_baseline_bluetooth_disabled_24);
+                break;
+            case SCANNING:
+                m_bluetoothButton.setColorFilter(ContextCompat.getColor(this, R.color.bluetoothDeviceScanning));
+                m_bluetoothButton.setImageResource(R.drawable.ic_baseline_bluetooth_searching_24);
+                break;
+            case CONNECTING:
+                m_bluetoothButton.setColorFilter(ContextCompat.getColor(this, R.color.bluetoothDeviceConnecting));
+                m_bluetoothButton.setImageResource(R.drawable.ic_baseline_bluetooth_24);
+                break;
+            case CONNECTED:
+                m_bluetoothButton.setColorFilter(ContextCompat.getColor(this, R.color.bluetoothDeviceConnected));
+                m_bluetoothButton.setImageResource(R.drawable.ic_baseline_bluetooth_24);
+                break;
+            case ERROR:
+                m_bluetoothButton.setColorFilter(ContextCompat.getColor(this, R.color.bluetoothDeviceConnectionFailed));
+                m_bluetoothButton.setImageResource(R.drawable.ic_baseline_bluetooth_disabled_24);
+                break;
+        }
     }
 
     @Override
@@ -401,7 +462,8 @@ public class MainActivity
                                     public void run()
                                     {
                                         m_team1ScoreText.setAnimation(null);
-                                        refreshTeam1ScoreDisplay();
+                                        updateTeam1ScoreDisplay();
+                                        sendTeam1ScoreToBTDevice();
                                     }
                                 });
                             }
@@ -426,7 +488,8 @@ public class MainActivity
                                     public void run()
                                     {
                                         m_team2ScoreText.setAnimation(null);
-                                        refreshTeam2ScoreDisplay();
+                                        updateTeam2ScoreDisplay();
+                                        sendTeam2ScoreToBTDevice();
                                     }
                                 });
                             }
@@ -454,5 +517,69 @@ public class MainActivity
             }
         }
         return false;
+    }
+    
+    private void sendAllValuesToBTDevice()
+    {
+        if (m_bluetoothManager.getStatus() == BluetoothManager.Status.CONNECTED)
+        {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+            ColorPickerPreferenceManager colorPreferences = ColorPickerPreferenceManager.getInstance(this);
+
+            m_bluetoothManager.sendTeam1Score(m_team1Score);
+
+            int team1Color = colorPreferences.getColor("team1Color", getResources().getColor(R.color.team1Color, null));
+            m_bluetoothManager.sendTeam1Color(team1Color);
+
+            int team1Brightness = preferences.getInt("team1Brightness", 16);
+            m_bluetoothManager.sendTeam1Brightness(team1Brightness);
+
+            m_bluetoothManager.sendTeam2Score(m_team2Score);
+
+            int team2Color = colorPreferences.getColor("team2Color", getResources().getColor(R.color.team2Color, null));
+            m_bluetoothManager.sendTeam2Color(team2Color);
+
+            int team2Brightness = preferences.getInt("team2Brightness", 16);
+            m_bluetoothManager.sendTeam2Brightness(team2Brightness);
+        }
+    }
+
+    private void sendTeam1ScoreToBTDevice()
+    {
+        if (m_bluetoothManager.getStatus() == BluetoothManager.Status.CONNECTED)
+        {
+            m_bluetoothManager.sendTeam1Score(m_team1Score);
+        }
+    }
+
+    private void sendTeam2ScoreToBTDevice()
+    {
+        if (m_bluetoothManager.getStatus() == BluetoothManager.Status.CONNECTED)
+        {
+            m_bluetoothManager.sendTeam2Score(m_team2Score);
+        }
+    }
+
+    @Override
+    public void onBluetoothManagerStatusChanged(BluetoothManager.Status newStatus)
+    {
+        switch (newStatus)
+        {
+            case DISCONNECTED:
+                break;
+            case SCANNING:
+                break;
+            case CONNECTING:
+                break;
+            case CONNECTED:
+            {
+                sendAllValuesToBTDevice();
+                break;
+            }
+            case ERROR:
+                break;
+        }
+        
+        setBluetoothButtonState(newStatus);
     }
 }

@@ -1,6 +1,7 @@
 package com.krhom.scoredisplay.bluetooth;
 
 import android.os.Bundle;
+import android.os.ParcelUuid;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -13,7 +14,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.krhom.scoredisplay.R;
 import com.krhom.scoredisplay.util.ScanPermission;
 import com.polidea.rxandroidble2.RxBleClient;
-import com.polidea.rxandroidble2.RxBleConnection;
 import com.polidea.rxandroidble2.RxBleDevice;
 import com.polidea.rxandroidble2.exceptions.BleScanException;
 import com.polidea.rxandroidble2.scan.ScanFilter;
@@ -27,7 +27,7 @@ import butterknife.ButterKnife;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 
-public class BluetoothScanActivity extends AppCompatActivity implements AdapterView.OnItemClickListener, BluetoothDeviceConnectionStateChangedListener
+public class BluetoothScanActivity extends AppCompatActivity implements AdapterView.OnItemClickListener, BluetoothDeviceConnection.StatusChangedListener
 {
     @BindView(R.id.bluetoothDeviceList)
     ListView m_bluetoothDeviceListView;
@@ -72,7 +72,7 @@ public class BluetoothScanActivity extends AppCompatActivity implements AdapterV
                                 .setCallbackType(ScanSettings.CALLBACK_TYPE_ALL_MATCHES)
                                 .build(),
                         new ScanFilter.Builder()
-                                //.setDeviceName("DSD TECH")
+                                .setServiceUuid(new ParcelUuid(BluetoothManager.SERVICE))
                                 .build()
                 )
                 .observeOn(AndroidSchedulers.mainThread())
@@ -130,7 +130,6 @@ public class BluetoothScanActivity extends AppCompatActivity implements AdapterV
 
     private void dispose() {
         m_scanDisposable = null;
-
     }
 
     @Override
@@ -170,7 +169,7 @@ public class BluetoothScanActivity extends AppCompatActivity implements AdapterV
     }
 
     @Override
-    public void onBluetoothDeviceStatusChanged(String macAddress, RxBleConnection.RxBleConnectionState newState)
+    public void onBluetoothDeviceConnectionStatusChanged(String macAddress, BluetoothDeviceConnection.Status newStatus)
     {
         m_bluetoothDeviceArrayAdapter.notifyDataSetChanged();
     }
