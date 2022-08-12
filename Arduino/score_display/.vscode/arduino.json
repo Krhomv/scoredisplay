@@ -1,7 +1,6 @@
 {
-    "configuration": "cpu=atmega2560",
-    "board": "arduino:avr:mega",
+    "board": "arduino:samd:nano_33_iot",
     "programmer": "arduino:avrispmkii",
-    "port": "COM3",
+    "port": "COM4",
     "sketch": "score_display.ino"
 }

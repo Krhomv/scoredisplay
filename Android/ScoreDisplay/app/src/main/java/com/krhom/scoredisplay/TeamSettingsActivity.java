@@ -45,7 +45,6 @@ public class TeamSettingsActivity extends AppCompatActivity
         }
 
 
-
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null)
         {
@@ -76,9 +75,11 @@ public class TeamSettingsActivity extends AppCompatActivity
 
     private static void addTeamNameInputFilters(EditTextPreference preference)
     {
-        preference.setOnBindEditTextListener(new EditTextPreference.OnBindEditTextListener() {
+        preference.setOnBindEditTextListener(new EditTextPreference.OnBindEditTextListener()
+        {
             @Override
-            public void onBindEditText(@NonNull EditText editText) {
+            public void onBindEditText(@NonNull EditText editText)
+            {
                 editText.selectAll(); // select all text
                 int maxLength = 6;
 

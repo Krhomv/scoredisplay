@@ -14,5 +14,10 @@
     <string name="TEAM_1">TEAM 1</string>
     <string name="TEAM_2">TEAM 2</string>
     <string name="reset">Reset</string>
-
+    <string name="connect_bluetooth">Connect Bluetooth Display</string>
+    <string name="bluetooth_scan_start_failed">Bluetooth Scan Failed to Start</string>
+    <string name="bluetooth_device_disconnected">DISCONNECTED</string>
+    <string name="bluetooth_device_connecting">CONNECTING...</string>
+    <string name="bluetooth_device_connected">CONNECTED</string>
+    <string name="bluetooth_device_connection_failed">CONNECTION FAILED</string>
 </resources>

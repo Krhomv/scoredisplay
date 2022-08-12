@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/tableLayout"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:padding="10sp">
+
+
+    <TextView
+        android:id="@+id/btDeviceName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="left"
+        android:text="id"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/btDeviceAddress"
+        app:layout_constraintStart_toStartOf="@+id/btDeviceAddress"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+
+
+    <TextView
+        android:id="@+id/btDeviceAddress"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="right"
+        android:text="description"
+        app:layout_constraintStart_toStartOf="@+id/btDeviceName"
+        app:layout_constraintTop_toBottomOf="@+id/btDeviceName"
+        app:layout_constraintRight_toLeftOf="@id/btDeviceConnected"
+        app:layout_constraintHorizontal_chainStyle="spread_inside"/>
+
+
+    <TextView
+        android:id="@+id/btDeviceConnected"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="categoryId"
+        app:layout_constraintBaseline_toBaselineOf="@+id/btDeviceAddress"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintLeft_toRightOf="@+id/btDeviceAddress" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
